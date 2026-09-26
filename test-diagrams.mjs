@@ -226,6 +226,70 @@ try {
   failed++;
 }
 
+// Test Group 6: Pro Tier Features & Exporters (100% Free Pro Features)
+console.log('\n--- Test Group 6: Pro Tier Features & Exporters ---');
+try {
+  const { Exporter } = await import('./src/components/exporter.js');
+  const { formatMermaidCode } = await import('./src/utils/mermaid-formatter.js');
+
+  // 1. Mermaid Code Formatter test
+  const unformatted = 'flowchart TD\nsubgraph ClusterA[Service Group]\nA-->B\nend';
+  const formatted = formatMermaidCode(unformatted);
+  if (formatted.includes('  A --> B') && formatted.includes('subgraph ClusterA[Service Group]')) {
+    console.log('✅ [Pro Formatter] formatMermaidCode() cleans indentation and operator spacing.');
+    passed++;
+  } else {
+    console.error('❌ [Pro Formatter] formatMermaidCode() failed:', formatted);
+    failed++;
+  }
+
+  // 2. Pure PDF 1.4 Synthesizer test
+  const dummyJpegBytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x01, 0x00, 0x48, 0x00, 0x48, 0x00, 0x00, 0xff, 0xd9]);
+  const pdfBytes = Exporter.synthesizePdfFromJpeg(dummyJpegBytes, 200, 100, { pageSize: 'fit', title: 'Test Diagram' });
+  const pdfString = Buffer.from(pdfBytes).toString('latin1');
+  if (
+    pdfString.startsWith('%PDF-1.4') &&
+    pdfString.includes('/Type /Catalog') &&
+    pdfString.includes('/Filter /DCTDecode') &&
+    pdfString.includes('%%EOF')
+  ) {
+    console.log('✅ [Pro PDF] synthesizePdfFromJpeg() outputs valid compliant PDF 1.4 binary data.');
+    passed++;
+  } else {
+    console.error('❌ [Pro PDF] synthesizePdfFromJpeg() failed structure check.');
+    failed++;
+  }
+
+  // 3. Embed & Share snippets test
+  const mockContainer = dom.window.document.createElement('div');
+  mockContainer.innerHTML = '<svg width="200" height="100" viewBox="0 0 200 100"><rect width="200" height="100" fill="#080c14"/></svg>';
+  const snippets = Exporter.generateEmbedSnippets('graph TD\nA-->B', mockContainer, 'Architecture Overview');
+  if (
+    snippets.markdown.startsWith('```mermaid') &&
+    snippets.html.includes('<pre class="mermaid">') &&
+    snippets.dataUri.startsWith('data:image/svg+xml')
+  ) {
+    console.log('✅ [Pro Embed] generateEmbedSnippets() generates valid GitHub Markdown, HTML, and SVG Data URI.');
+    passed++;
+  } else {
+    console.error('❌ [Pro Embed] generateEmbedSnippets() failed:', snippets);
+    failed++;
+  }
+
+  // 4. Filename sanitizer test
+  const sanitized = Exporter.sanitizeFilename('Project Architecture / v1.0 (Q3)!');
+  if (sanitized === 'project-architecture-v1-0-q3') {
+    console.log('✅ [Pro Exporter] sanitizeFilename() properly cleans complex diagram titles.');
+    passed++;
+  } else {
+    console.error('❌ [Pro Exporter] sanitizeFilename() failed:', sanitized);
+    failed++;
+  }
+} catch (err) {
+  console.error('❌ [Pro Exporter] Test Group 6 failed:', err);
+  failed++;
+}
+
 console.log(`\n========================================`);
 console.log(`Total checks passed: ${passed}, failed: ${failed}`);
 console.log(`========================================\n`);
@@ -233,4 +297,5 @@ console.log(`========================================\n`);
 if (failed > 0) {
   process.exit(1);
 }
+
 

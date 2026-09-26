@@ -1,8 +1,4 @@
-/**
- * Code editor component for Mermaid Studio
- * Provides a monospaced textarea with synchronized line numbers,
- * tab indentation, line/col tracking, snippet insertion, code formatting, and debounced input events.
- */
+import { formatMermaidCode } from '../utils/mermaid-formatter.js';
 
 export class EditorController {
   constructor(options) {
@@ -115,35 +111,8 @@ export class EditorController {
 
   formatCode() {
     const raw = this.textarea.value;
-    const lines = raw.split('\n');
-    let indentLevel = 0;
-    const formatted = [];
-
-    for (let line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed) {
-        // Keep single blank line max
-        if (formatted.length > 0 && formatted[formatted.length - 1] !== '') {
-          formatted.push('');
-        }
-        continue;
-      }
-
-      // Check closing subgraphs / blocks
-      if (trimmed.startsWith('end')) {
-        indentLevel = Math.max(0, indentLevel - 1);
-      }
-
-      const indent = '  '.repeat(indentLevel);
-      formatted.push(`${indent}${trimmed}`);
-
-      // Check opening subgraphs / blocks
-      if (trimmed.startsWith('subgraph ') || trimmed.startsWith('rect ') || trimmed.startsWith('opt ') || trimmed.startsWith('loop ')) {
-        indentLevel++;
-      }
-    }
-
-    this.setValue(formatted.join('\n'));
+    const formatted = formatMermaidCode(raw);
+    this.setValue(formatted);
   }
 
   updateTypeBadge() {

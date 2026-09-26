@@ -86,28 +86,45 @@
           <option value="base">Theme: Base</option>
         </select>
 
+        <!-- Presentation Mode Trigger -->
+        <button id="presentBtn" class="btn btn-secondary" type="button" title="Enter Distraction-Free Presentation Mode (Key: P)">
+          <span>🖥️</span>
+          <span>Present</span>
+        </button>
+
         <!-- Export Menu Trigger -->
         <div style="position: relative;">
           <button id="exportMenuBtn" class="btn btn-export-primary" type="button" title="Download or Export Diagram">
             <span>⚡ Export</span>
             <span style="font-size: 10px;">▼</span>
           </button>
-          <div id="exportDropdown" class="modal-card" style="display: none; position: absolute; top: 40px; right: 0; width: 230px; z-index: 50; padding: 6px; box-shadow: 0 12px 36px rgba(0,0,0,0.65);">
-            <button id="exportSvgBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
-              🖼️ Download SVG
+          <div id="exportDropdown" class="modal-card" style="display: none; position: absolute; top: 40px; right: 0; width: 260px; z-index: 50; padding: 8px; box-shadow: 0 16px 40px rgba(0,0,0,0.75);">
+            <button id="openProExportBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 9px 12px; margin-bottom: 4px; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.28); color: #818cf8; font-weight: 600;">
+              <span>🎨 Pro Export Studio…</span>
+              <span class="badge" style="margin-left: auto; font-size: 9px; padding: 1px 5px; background: #6366f1; color: #fff; border-radius: 4px;">FREE PRO</span>
             </button>
-            <button id="exportPngBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
-              📷 Download PNG (2x Retina)
-            </button>
-            <button id="downloadMmdBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
-              📄 Download .mmd Source
+            <button id="copyPngClipboardBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>📋 Copy Image to Clipboard</span>
             </button>
             <hr style="border: none; border-top: 1px solid var(--line); margin: 4px 0;" />
-            <button id="copySvgBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
-              📋 Copy SVG Code
+            <button id="exportSvgBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>🖼️ Download SVG (Vector)</span>
             </button>
-            <button id="copyMdBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px;">
-              📝 Copy Markdown Fence
+            <button id="exportPngBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>📷 Download PNG (2x Retina)</span>
+            </button>
+            <button id="exportPdfBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>📄 Download PDF (Print-Ready)</span>
+            </button>
+            <button id="exportHtmlBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>🌐 Standalone HTML (Interactive)</span>
+            </button>
+            <button id="downloadMmdBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>📄 Download .mmd Source</span>
+            </button>
+            <hr style="border: none; border-top: 1px solid var(--line); margin: 4px 0;" />
+            <button id="openEmbedModalBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px;">
+              <span>🔗 Embed & Share Code…</span>
             </button>
           </div>
         </div>
@@ -477,6 +494,209 @@
         </div>
       </div>
     </div>
+
+    <!-- Pro Export Studio Modal -->
+    <div id="proExportModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="proExportModalTitle">
+      <div class="modal-card pro-export-card" style="max-width: 820px; width: 95vw;">
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="brand-badge-logo" style="width: 28px; height: 28px;" aria-hidden="true">
+              <span style="font-size: 14px;">🎨</span>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <h2 id="proExportModalTitle" class="modal-title">Pro Export Studio</h2>
+                <span class="badge" style="background: linear-gradient(135deg, #6366f1, #a855f7); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 9999px;">FREE PRO</span>
+              </div>
+              <p class="modal-subtitle" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                Watermark-free ultra HD rendering, vector PDF, transparent backgrounds, and standalone interactive bundles.
+              </p>
+            </div>
+          </div>
+          <button class="modal-close-btn" data-close="proExportModal" type="button" aria-label="Close modal">✕</button>
+        </div>
+
+        <div class="modal-body" style="padding: 20px; max-height: 72vh; overflow-y: auto;">
+          <div class="pro-export-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <!-- Left: Settings & Options -->
+            <div class="pro-export-controls" style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Format Selector -->
+              <div>
+                <label class="form-label" style="display: block; margin-bottom: 6px; font-weight: 600;">Export Format</label>
+                <div class="export-format-chips" id="exportFormatGroup" role="radiogroup" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;">
+                  <button type="button" class="export-chip active" data-format="png">PNG (Raster)</button>
+                  <button type="button" class="export-chip" data-format="svg">SVG (Vector)</button>
+                  <button type="button" class="export-chip" data-format="pdf">PDF (Print)</button>
+                  <button type="button" class="export-chip" data-format="webp">WebP (Modern)</button>
+                  <button type="button" class="export-chip" data-format="html">HTML (Offline)</button>
+                  <button type="button" class="export-chip" data-format="mmd">MMD (Source)</button>
+                </div>
+              </div>
+
+              <!-- Resolution / DPI Scale -->
+              <div id="proScaleOptionGroup">
+                <label class="form-label" style="display: block; margin-bottom: 6px; font-weight: 600;">
+                  Resolution & Density
+                </label>
+                <div class="export-scale-chips" id="exportScaleGroup" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                  <button type="button" class="export-chip" data-scale="1">1x (72 DPI)</button>
+                  <button type="button" class="export-chip active" data-scale="2">2x (Retina)</button>
+                  <button type="button" class="export-chip" data-scale="3">3x (HD Print)</button>
+                  <button type="button" class="export-chip" data-scale="4">4x (4K Ultra)</button>
+                </div>
+              </div>
+
+              <!-- Background Option -->
+              <div id="proBgOptionGroup">
+                <label class="form-label" style="display: block; margin-bottom: 6px; font-weight: 600;">Background Theme</label>
+                <div class="export-bg-chips" id="exportBgGroup" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                  <button type="button" class="export-chip active" data-bg="#080c14">Studio Dark</button>
+                  <button type="button" class="export-chip" data-bg="transparent">Transparent</button>
+                  <button type="button" class="export-chip" data-bg="#0e1626">Deep Canvas</button>
+                  <button type="button" class="export-chip" data-bg="#ffffff">Clean White</button>
+                </div>
+              </div>
+
+              <!-- Padding Option -->
+              <div id="proPaddingOptionGroup">
+                <label class="form-label" style="display: block; margin-bottom: 6px; font-weight: 600;">Canvas Padding</label>
+                <div class="export-padding-chips" id="exportPaddingGroup" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;">
+                  <button type="button" class="export-chip" data-padding="0">None (0px)</button>
+                  <button type="button" class="export-chip" data-padding="16">Tight (16px)</button>
+                  <button type="button" class="export-chip active" data-padding="32">Default (32px)</button>
+                  <button type="button" class="export-chip" data-padding="64">Spacious (64px)</button>
+                </div>
+              </div>
+
+              <!-- PDF Page Layout (Shown when PDF selected) -->
+              <div id="proPdfLayoutGroup" style="display: none;">
+                <label class="form-label" style="display: block; margin-bottom: 6px; font-weight: 600;">PDF Page Layout</label>
+                <div class="export-pdf-chips" id="exportPdfLayoutSelect" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;">
+                  <button type="button" class="export-chip active" data-pdf="fit">Fit Diagram Exactly</button>
+                  <button type="button" class="export-chip" data-pdf="a4-landscape">A4 Landscape</button>
+                  <button type="button" class="export-chip" data-pdf="a4-portrait">A4 Portrait</button>
+                  <button type="button" class="export-chip" data-pdf="letter-landscape">US Letter Landscape</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: Live Inspector & Technical Specs -->
+            <div class="pro-export-preview-column" style="display: flex; flex-direction: column; gap: 12px;">
+              <label class="form-label" style="font-weight: 600;">Live Render Preview</label>
+              <div id="proExportPreviewBox" style="flex: 1; min-height: 220px; max-height: 280px; border-radius: 8px; border: 1px solid var(--line); background: #080c14; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; padding: 12px;">
+                <div id="proExportPreviewInner" style="max-width: 100%; max-height: 100%; display: flex; align-items: center; justify-content: center;">
+                  <!-- Diagram clone inserted here -->
+                </div>
+              </div>
+
+              <!-- Specs Card -->
+              <div class="pro-specs-card" style="background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 12px; font-size: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 11px;">Dimensions</span>
+                  <strong id="proSpecDimensions" style="color: var(--text);">2400 × 1600 px</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 11px;">DPI Density</span>
+                  <strong id="proSpecDpi" style="color: var(--text);">2x Retina (144 DPI)</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 11px;">Est. File Size</span>
+                  <strong id="proSpecSize" style="color: var(--text);">~180 KB</strong>
+                </div>
+                <div>
+                  <span style="color: var(--text-muted); display: block; font-size: 11px;">Watermark Status</span>
+                  <strong style="color: #10b981;">Clean / 100% Free</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="justify-content: space-between;">
+          <button id="proCopyImageBtn" class="btn btn-secondary" type="button" title="Direct paste to Slack, Notion, Jira">
+            <span>📋 Copy Image to Clipboard</span>
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn" data-close="proExportModal" type="button">Close</button>
+            <button id="proExecuteExportBtn" class="btn btn-primary" type="button">
+              <span>⚡ Export & Download</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Embed & Share Modal -->
+    <div id="embedModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="embedModalTitle">
+      <div class="modal-card" style="max-width: 680px; width: 90vw;">
+        <div class="modal-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">🔗</span>
+            <h2 id="embedModalTitle" class="modal-title">Embed & Share Code</h2>
+          </div>
+          <button class="modal-close-btn" data-close="embedModal" type="button" aria-label="Close modal">✕</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <!-- Tabs -->
+          <div class="ai-engine-switcher" id="embedTabGroup" style="margin-bottom: 16px;">
+            <button class="ai-engine-tab active" data-embed="markdown" type="button">
+              <span>GitHub Markdown</span>
+            </button>
+            <button class="ai-engine-tab" data-embed="html" type="button">
+              <span>HTML &lt;pre&gt; Embed</span>
+            </button>
+            <button class="ai-engine-tab" data-embed="datauri" type="button">
+              <span>SVG Data URI</span>
+            </button>
+            <button class="ai-engine-tab" data-embed="svg" type="button">
+              <span>Raw SVG Code</span>
+            </button>
+          </div>
+
+          <p id="embedDescText" style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+            Copy-paste directly into GitHub README, Notion, or GitBook.
+          </p>
+
+          <div style="position: relative;">
+            <textarea id="embedCodeTextarea" readonly class="code-editor" style="height: 180px; width: 100%; border-radius: 8px; font-family: var(--font-mono); font-size: 12px; padding: 12px; background: var(--surface-2); border: 1px solid var(--line); color: var(--text); resize: none;"></textarea>
+            <button id="copyEmbedCodeBtn" class="btn btn-primary" type="button" style="position: absolute; top: 10px; right: 10px; font-size: 11px; padding: 4px 10px;">
+              <span>📋 Copy Snippet</span>
+            </button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn" data-close="embedModal" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Presentation Mode Floating HUD -->
+    <div id="presentationHud" class="presentation-hud" style="display: none;">
+      <div class="presentation-hud-inner">
+        <button id="laserPointerToggleBtn" class="presentation-btn" type="button" title="Toggle Meeting Laser Pointer (Key: L)">
+          <span>🔴</span>
+          <span>Laser Pointer</span>
+        </button>
+        <span class="presentation-divider"></span>
+        <button id="presZoomOutBtn" class="presentation-btn" type="button" title="Zoom Out ( - )">−</button>
+        <span id="presZoomLabel" class="presentation-zoom-label">100%</span>
+        <button id="presZoomInBtn" class="presentation-btn" type="button" title="Zoom In ( + )">+</button>
+        <button id="presFitBtn" class="presentation-btn" type="button" title="Fit to Screen ( F )">Fit</button>
+        <span class="presentation-divider"></span>
+        <button id="presThemeToggleBtn" class="presentation-btn" type="button" title="Toggle Stage Theme (Dark / Light)">
+          <span>🌓</span>
+          <span>Stage</span>
+        </button>
+        <span class="presentation-divider"></span>
+        <button id="exitPresentationBtn" class="presentation-btn presentation-btn-exit" type="button" title="Exit Presentation Mode ( Esc )">
+          <span>✕</span>
+          <span>Exit (Esc)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Laser Pointer Cursor Dot -->
+    <div id="laserPointer" class="laser-pointer" style="display: none;"></div>
 
   </div>
 

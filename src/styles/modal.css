@@ -383,3 +383,162 @@
   color: var(--text-subtle);
 }
 
+/* ==========================================================================
+   Pro Export Studio Chips & Layout
+   ========================================================================== */
+.export-chip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 8px 8px;
+  border-radius: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.export-chip:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.export-chip.active {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: var(--primary);
+  color: #818cf8;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+@media (max-width: 768px) {
+  .pro-export-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   Presentation Mode (Distraction-Free Zen / Presenter Stage)
+   ========================================================================== */
+body.presentation-active .app-header,
+body.presentation-active .activity-rail,
+body.presentation-active .sidebar-drawer,
+body.presentation-active .editor-pane,
+body.presentation-active .splitter,
+body.presentation-active .canvas-dock,
+body.presentation-active #nodeInspectorHud {
+  display: none !important;
+}
+
+body.presentation-active .workspace,
+body.presentation-active .canvas-pane,
+body.presentation-active #stage {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 900;
+  margin: 0 !important;
+}
+
+body.presentation-active.stage-oled #stage {
+  background: #000000 !important;
+}
+
+body.presentation-active.stage-white #stage {
+  background: #ffffff !important;
+}
+
+.presentation-hud {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  animation: fadeInPresHud 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInPresHud {
+  from { opacity: 0; transform: translate(-50%, 16px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.presentation-hud-inner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14, 22, 38, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line-strong);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+}
+
+.presentation-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.presentation-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+.presentation-btn.active {
+  color: #ff3366;
+  background: rgba(255, 51, 102, 0.18);
+  font-weight: 600;
+}
+
+.presentation-btn-exit:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.presentation-divider {
+  width: 1px;
+  height: 16px;
+  background: var(--line);
+}
+
+.presentation-zoom-label {
+  font-size: 11px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.laser-pointer {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ff2255;
+  box-shadow: 0 0 18px 6px rgba(255, 34, 85, 0.9), 0 0 36px 14px rgba(255, 34, 85, 0.45);
+  pointer-events: none;
+  z-index: 1001;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.1s ease;
+}
+
+

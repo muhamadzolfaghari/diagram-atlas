@@ -102,6 +102,20 @@ let selectedNodeEl = null;
 let currentTemplateFilter = 'all';
 let currentTemplateQuery = '';
 
+// Pro Export State (Watermark-Free, Multi-Resolution)
+let proExportFormat = 'png';
+let proExportScale = 2;
+let proExportBg = '#080c14';
+let proExportPadding = 32;
+let proExportPdf = 'fit';
+let currentEmbedType = 'markdown';
+
+// Presentation Mode State (Distraction-Free Zen & Laser Pointer)
+let isPresentationMode = false;
+let isLaserPointerActive = false;
+let presentationBackdropIndex = 0;
+const presentationBackdrops = ['', 'stage-oled', 'stage-white'];
+
 // Initialize Application
 async function initApp() {
   // 1. Initialize Theme & Storage
@@ -740,6 +754,7 @@ function bindUIEvents() {
   });
 
   // Export Menu
+  // Export Menu Dropdown Toggle
   exportMenuBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     exportDropdown.style.display = exportDropdown.style.display === 'block' ? 'none' : 'block';
@@ -751,7 +766,22 @@ function bindUIEvents() {
     }
   });
 
-  $('exportSvgBtn').addEventListener('click', () => {
+  // Pro Export Studio Modal
+  $('openProExportBtn')?.addEventListener('click', () => {
+    openProExportModal();
+  });
+
+  // Direct 1-Click Clipboard Image Copy
+  $('copyPngClipboardBtn')?.addEventListener('click', async () => {
+    await copyPngToClipboardDirect();
+  });
+
+  $('proCopyImageBtn')?.addEventListener('click', async () => {
+    await copyPngToClipboardDirect();
+  });
+
+  // Standard Direct Exports
+  $('exportSvgBtn')?.addEventListener('click', () => {
     try {
       Exporter.downloadSvg(diagramContainer, activeDiagramTitle);
       exportDropdown.style.display = 'none';
@@ -760,7 +790,7 @@ function bindUIEvents() {
     }
   });
 
-  $('exportPngBtn').addEventListener('click', async () => {
+  $('exportPngBtn')?.addEventListener('click', async () => {
     try {
       editorCtrl.setStatus('rendering', 'Exporting PNG…');
       await Exporter.downloadPng(diagramContainer, activeDiagramTitle, 2);
@@ -772,30 +802,101 @@ function bindUIEvents() {
     }
   });
 
-  $('downloadMmdBtn').addEventListener('click', () => {
-    Exporter.downloadSource(editorCtrl.getValue(), activeDiagramTitle);
-    exportDropdown.style.display = 'none';
+  // Print-Ready Vector PDF Export
+  $('exportPdfBtn')?.addEventListener('click', async () => {
+    try {
+      editorCtrl.setStatus('rendering', 'Generating PDF…');
+      exportDropdown.style.display = 'none';
+      await Exporter.downloadPdf(diagramContainer, activeDiagramTitle, {
+        pageSize: 'fit',
+        background: '#ffffff',
+        padding: 32,
+      });
+      editorCtrl.setStatus('', 'PDF exported!');
+      setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 2000);
+    } catch (err) {
+      editorCtrl.setStatus('error', 'PDF error');
+      showAlert(err.message);
+    }
   });
 
-  $('copySvgBtn').addEventListener('click', async () => {
+  // Standalone Interactive HTML Export
+  $('exportHtmlBtn')?.addEventListener('click', () => {
     try {
-      await Exporter.copySvg(diagramContainer);
       exportDropdown.style.display = 'none';
-      editorCtrl.setStatus('', 'SVG copied to clipboard!');
+      Exporter.downloadStandaloneHtml(diagramContainer, editorCtrl.getValue(), activeDiagramTitle);
+      editorCtrl.setStatus('', 'Standalone HTML exported!');
       setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 2000);
     } catch (err) {
       showAlert(err.message);
     }
   });
 
-  $('copyMdBtn').addEventListener('click', async () => {
-    try {
-      await Exporter.copyMarkdown(editorCtrl.getValue());
-      exportDropdown.style.display = 'none';
-      editorCtrl.setStatus('', 'Markdown copied to clipboard!');
-      setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 2000);
-    } catch (err) {
-      showAlert(err.message);
+  $('downloadMmdBtn')?.addEventListener('click', () => {
+    Exporter.downloadSource(editorCtrl.getValue(), activeDiagramTitle);
+    exportDropdown.style.display = 'none';
+  });
+
+  // Embed & Share Modal
+  $('openEmbedModalBtn')?.addEventListener('click', () => {
+    openEmbedModal();
+  });
+
+  $('copyEmbedCodeBtn')?.addEventListener('click', async () => {
+    const text = $('embedCodeTextarea')?.value;
+    if (text) {
+      await navigator.clipboard.writeText(text);
+      const btn = $('copyEmbedCodeBtn');
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<span>✅ Copied!</span>';
+        setTimeout(() => { btn.innerHTML = orig; }, 1800);
+      }
+    }
+  });
+
+  // Pro Export Modal Execute Button
+  $('proExecuteExportBtn')?.addEventListener('click', executeProExport);
+
+  // Setup Pro Export Studio Chips
+  setupProExportChips();
+  setupEmbedTabs();
+
+  // Presentation Mode Triggers & HUD Controls
+  $('presentBtn')?.addEventListener('click', enterPresentationMode);
+  $('exitPresentationBtn')?.addEventListener('click', exitPresentationMode);
+  $('laserPointerToggleBtn')?.addEventListener('click', toggleLaserPointer);
+
+  $('presZoomInBtn')?.addEventListener('click', () => {
+    canvasCtrl.setZoom(canvasCtrl.zoom * 1.2);
+    updatePresentationZoomLabel();
+  });
+
+  $('presZoomOutBtn')?.addEventListener('click', () => {
+    canvasCtrl.setZoom(canvasCtrl.zoom / 1.2);
+    updatePresentationZoomLabel();
+  });
+
+  $('presFitBtn')?.addEventListener('click', () => {
+    canvasCtrl.fit(false);
+    updatePresentationZoomLabel();
+  });
+
+  $('presThemeToggleBtn')?.addEventListener('click', () => {
+    presentationBackdropIndex = (presentationBackdropIndex + 1) % presentationBackdrops.length;
+    document.body.classList.remove('stage-oled', 'stage-white');
+    const nextCls = presentationBackdrops[presentationBackdropIndex];
+    if (nextCls) document.body.classList.add(nextCls);
+  });
+
+  // Track laser pointer cursor
+  window.addEventListener('mousemove', (e) => {
+    if (isPresentationMode && isLaserPointerActive) {
+      const pointer = $('laserPointer');
+      if (pointer) {
+        pointer.style.left = `${e.clientX}px`;
+        pointer.style.top = `${e.clientY}px`;
+      }
     }
   });
 
@@ -842,6 +943,17 @@ function bindUIEvents() {
   window.addEventListener('keydown', (e) => {
     const isTyping = e.target.matches('input, textarea, [contenteditable="true"]');
 
+    if (e.key === 'Escape') {
+      if (isPresentationMode) {
+        exitPresentationMode();
+        return;
+      }
+      document.querySelectorAll('.modal-overlay.open').forEach((m) => m.classList.remove('open'));
+      exportDropdown.style.display = 'none';
+      userProfilePopover.style.display = 'none';
+      return;
+    }
+
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       e.preventDefault();
       $('newDiagramTitle').value = activeDiagramTitle;
@@ -857,21 +969,32 @@ function bindUIEvents() {
       e.preventDefault();
       openModal('shortcutsModal');
     } else if (!isTyping) {
-      if (e.key.toLowerCase() === 'f') {
+      if (e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        if (isPresentationMode) exitPresentationMode();
+        else enterPresentationMode();
+      } else if (e.key.toLowerCase() === 'l' && isPresentationMode) {
+        e.preventDefault();
+        toggleLaserPointer();
+      } else if (e.key.toLowerCase() === 'f') {
         e.preventDefault();
         canvasCtrl.fit(true);
+        if (isPresentationMode) updatePresentationZoomLabel();
       } else if (e.key.toLowerCase() === 'c') {
         e.preventDefault();
         canvasCtrl.center(true);
       } else if (e.key === '0') {
         e.preventDefault();
         canvasCtrl.reset(true);
+        if (isPresentationMode) updatePresentationZoomLabel();
       } else if (e.key === '+' || e.key === '=') {
         e.preventDefault();
         canvasCtrl.setZoom(canvasCtrl.zoom * 1.2);
+        if (isPresentationMode) updatePresentationZoomLabel();
       } else if (e.key === '-' || e.key === '_') {
         e.preventDefault();
         canvasCtrl.setZoom(canvasCtrl.zoom / 1.2);
+        if (isPresentationMode) updatePresentationZoomLabel();
       }
     }
   });
@@ -1055,6 +1178,280 @@ function setupMobileTabs() {
       }
     });
   });
+}
+
+// ==========================================================================
+// Pro Export Studio Modal Handlers
+// ==========================================================================
+function openProExportModal() {
+  exportDropdown.style.display = 'none';
+  const previewInner = $('proExportPreviewInner');
+  const previewBox = $('proExportPreviewBox');
+  const svgEl = diagramContainer.querySelector('svg');
+  if (!svgEl) {
+    showAlert('Please create or render a diagram first.');
+    return;
+  }
+
+  if (previewBox) {
+    previewBox.style.background = proExportBg === 'transparent'
+      ? 'repeating-conic-gradient(#1e293b 0% 25%, #0f172a 0% 50%) 50% / 16px 16px'
+      : proExportBg;
+  }
+
+  if (previewInner) {
+    previewInner.innerHTML = '';
+    const clone = svgEl.cloneNode(true);
+    clone.style.maxWidth = '100%';
+    clone.style.maxHeight = '200px';
+    clone.style.width = 'auto';
+    clone.style.height = 'auto';
+    previewInner.appendChild(clone);
+  }
+
+  updateProExportSpecs();
+  openModal('proExportModal');
+}
+
+function updateProExportSpecs() {
+  const svgEl = diagramContainer.querySelector('svg');
+  const box = svgEl?.viewBox?.baseVal;
+  const baseW = (box?.width || svgEl?.clientWidth || 1200) + proExportPadding * 2;
+  const baseH = (box?.height || svgEl?.clientHeight || 800) + proExportPadding * 2;
+
+  const finalW = Math.round(baseW * proExportScale);
+  const finalH = Math.round(baseH * proExportScale);
+
+  if ($('proSpecDimensions')) {
+    $('proSpecDimensions').textContent = `${finalW} × ${finalH} px`;
+  }
+  if ($('proSpecDpi')) {
+    const dpi = proExportScale === 1 ? '72 DPI (Web)' : proExportScale === 2 ? '144 DPI (Retina)' : proExportScale === 3 ? '216 DPI (HD Print)' : '300+ DPI (Ultra 4K)';
+    $('proSpecDpi').textContent = `${proExportScale}x (${dpi})`;
+  }
+  if ($('proSpecSize')) {
+    const approxKb = Math.round((finalW * finalH * 4) / 45000);
+    $('proSpecSize').textContent = `~${Math.max(45, approxKb)} KB`;
+  }
+
+  const isRasterOrPdf = ['png', 'webp', 'pdf'].includes(proExportFormat);
+  const isPdf = proExportFormat === 'pdf';
+  const scaleGroup = $('proScaleOptionGroup');
+  const pdfGroup = $('proPdfLayoutGroup');
+
+  if (scaleGroup) scaleGroup.style.display = isRasterOrPdf ? 'block' : 'none';
+  if (pdfGroup) pdfGroup.style.display = isPdf ? 'block' : 'none';
+}
+
+function setupProExportChips() {
+  // Format selection
+  document.querySelectorAll('#exportFormatGroup .export-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#exportFormatGroup .export-chip').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      proExportFormat = btn.dataset.format;
+      updateProExportSpecs();
+    });
+  });
+
+  // Scale selection
+  document.querySelectorAll('#exportScaleGroup .export-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#exportScaleGroup .export-chip').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      proExportScale = Number(btn.dataset.scale);
+      updateProExportSpecs();
+    });
+  });
+
+  // Background selection
+  document.querySelectorAll('#exportBgGroup .export-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#exportBgGroup .export-chip').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      proExportBg = btn.dataset.bg;
+      const previewBox = $('proExportPreviewBox');
+      if (previewBox) {
+        previewBox.style.background = proExportBg === 'transparent'
+          ? 'repeating-conic-gradient(#1e293b 0% 25%, #0f172a 0% 50%) 50% / 16px 16px'
+          : proExportBg;
+      }
+      updateProExportSpecs();
+    });
+  });
+
+  // Padding selection
+  document.querySelectorAll('#exportPaddingGroup .export-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#exportPaddingGroup .export-chip').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      proExportPadding = Number(btn.dataset.padding);
+      updateProExportSpecs();
+    });
+  });
+
+  // PDF Page layout selection
+  document.querySelectorAll('#exportPdfLayoutSelect .export-chip').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#exportPdfLayoutSelect .export-chip').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      proExportPdf = btn.dataset.pdf;
+    });
+  });
+}
+
+async function executeProExport() {
+  try {
+    editorCtrl.setStatus('rendering', `Exporting ${proExportFormat.toUpperCase()}…`);
+    closeModal('proExportModal');
+
+    if (proExportFormat === 'png') {
+      await Exporter.downloadPng(diagramContainer, activeDiagramTitle, {
+        scale: proExportScale,
+        background: proExportBg,
+        padding: proExportPadding,
+      });
+    } else if (proExportFormat === 'svg') {
+      Exporter.downloadSvg(diagramContainer, activeDiagramTitle, {
+        background: proExportBg,
+        padding: proExportPadding,
+      });
+    } else if (proExportFormat === 'pdf') {
+      await Exporter.downloadPdf(diagramContainer, activeDiagramTitle, {
+        pageSize: proExportPdf,
+        background: proExportBg,
+        padding: proExportPadding,
+      });
+    } else if (proExportFormat === 'webp') {
+      await Exporter.downloadWebp(diagramContainer, activeDiagramTitle, {
+        scale: proExportScale,
+        background: proExportBg,
+        padding: proExportPadding,
+      });
+    } else if (proExportFormat === 'html') {
+      Exporter.downloadStandaloneHtml(diagramContainer, editorCtrl.getValue(), activeDiagramTitle);
+    } else if (proExportFormat === 'mmd') {
+      Exporter.downloadSource(editorCtrl.getValue(), activeDiagramTitle);
+    }
+
+    editorCtrl.setStatus('', 'Export complete!');
+    setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 2500);
+  } catch (err) {
+    editorCtrl.setStatus('error', 'Export failed');
+    showAlert(err.message);
+  }
+}
+
+async function copyPngToClipboardDirect() {
+  try {
+    editorCtrl.setStatus('rendering', 'Copying image to clipboard…');
+    exportDropdown.style.display = 'none';
+    closeModal('proExportModal');
+    await Exporter.copyImageToClipboard(diagramContainer, {
+      scale: proExportScale || 2,
+      background: proExportBg || '#080c14',
+      padding: proExportPadding || 32,
+    });
+    editorCtrl.setStatus('', 'Image copied! Ready to paste (Cmd+V)');
+    setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 3000);
+  } catch (err) {
+    editorCtrl.setStatus('error', 'Clipboard error');
+    showAlert(err.message || 'Clipboard copy failed. Try standard download.');
+  }
+}
+
+// ==========================================================================
+// Embed & Share Modal Handlers
+// ==========================================================================
+function openEmbedModal() {
+  exportDropdown.style.display = 'none';
+  updateEmbedContent();
+  openModal('embedModal');
+}
+
+function updateEmbedContent() {
+  const snippets = Exporter.generateEmbedSnippets(editorCtrl.getValue(), diagramContainer, activeDiagramTitle);
+  const textarea = $('embedCodeTextarea');
+  const desc = $('embedDescText');
+  if (!textarea) return;
+
+  if (currentEmbedType === 'markdown') {
+    textarea.value = snippets.markdown;
+    if (desc) desc.textContent = 'Paste into GitHub README.md, GitLab, Notion, or GitBook.';
+  } else if (currentEmbedType === 'html') {
+    textarea.value = snippets.html;
+    if (desc) desc.textContent = 'Embed directly into any website, blog, or documentation HTML.';
+  } else if (currentEmbedType === 'datauri') {
+    textarea.value = snippets.dataUri;
+    if (desc) desc.textContent = 'Use as an inline <img src="data:image/svg+xml;utf8,..."> without external image files.';
+  } else if (currentEmbedType === 'svg') {
+    textarea.value = snippets.svg;
+    if (desc) desc.textContent = 'Standard clean XML SVG markup for vector graphics.';
+  }
+}
+
+function setupEmbedTabs() {
+  document.querySelectorAll('#embedTabGroup .ai-engine-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('#embedTabGroup .ai-engine-tab').forEach((t) => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentEmbedType = tab.dataset.embed;
+      updateEmbedContent();
+    });
+  });
+}
+
+// ==========================================================================
+// Presentation Mode Handlers (Distraction-Free Zen & Laser Pointer)
+// ==========================================================================
+function enterPresentationMode() {
+  isPresentationMode = true;
+  document.body.classList.add('presentation-active');
+  const hud = $('presentationHud');
+  if (hud) hud.style.display = 'block';
+
+  document.body.classList.remove('stage-oled', 'stage-white');
+  presentationBackdropIndex = 0;
+
+  setTimeout(() => {
+    canvasCtrl.measure();
+    canvasCtrl.fit(false);
+    updatePresentationZoomLabel();
+  }, 80);
+}
+
+function exitPresentationMode() {
+  isPresentationMode = false;
+  document.body.classList.remove('presentation-active', 'stage-oled', 'stage-white');
+  const hud = $('presentationHud');
+  if (hud) hud.style.display = 'none';
+
+  disableLaserPointer();
+  setTimeout(() => {
+    canvasCtrl.measure();
+    canvasCtrl.applyTransform();
+  }, 80);
+}
+
+function toggleLaserPointer() {
+  isLaserPointerActive = !isLaserPointerActive;
+  const btn = $('laserPointerToggleBtn');
+  const pointer = $('laserPointer');
+  if (btn) btn.classList.toggle('active', isLaserPointerActive);
+  if (pointer) pointer.style.display = isLaserPointerActive ? 'block' : 'none';
+}
+
+function disableLaserPointer() {
+  isLaserPointerActive = false;
+  const btn = $('laserPointerToggleBtn');
+  const pointer = $('laserPointer');
+  if (btn) btn.classList.remove('active');
+  if (pointer) pointer.style.display = 'none';
+}
+
+function updatePresentationZoomLabel() {
+  const lbl = $('presZoomLabel');
+  if (lbl && canvasCtrl) lbl.textContent = `${Math.round(canvasCtrl.zoom * 100)}%`;
 }
 
 // Modal Helpers
