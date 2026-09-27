@@ -1,0 +1,5 @@
+# robots.txt for Mermaid Studio
+User-agent: *
+Allow: /
+
+Sitemap: https://muhamadzolfaghari.github.io/mermaid-studio/sitemap.xml

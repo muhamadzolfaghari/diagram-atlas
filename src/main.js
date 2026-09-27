@@ -6,6 +6,7 @@ import { Exporter } from './components/exporter.js';
 import { AIAssistant } from './components/ai-assistant.js';
 import { MiniMapController } from './components/minimap.js';
 import { initMermaid, renderMermaid, setMermaidTheme } from './utils/mermaid-renderer.js';
+import { LandingPageController } from './components/landing.js';
 import {
   buttonVariants,
   badgeVariants,
@@ -208,6 +209,25 @@ async function initApp() {
   bindUIEvents();
   setupSplitter();
   setupMobileTabs();
+
+  // 10. Initialize Landing Page Controller
+  const landingCtrl = new LandingPageController({
+    landingViewEl: $('landingView'),
+    studioAppEl: $('app'),
+    onLaunchStudio: (templateId) => {
+      if (templateId) {
+        loadTemplate(templateId, true);
+      } else {
+        setTimeout(() => {
+          if (canvasCtrl) {
+            canvasCtrl.measure();
+            canvasCtrl.fit(false);
+          }
+          if (minimapCtrl) minimapCtrl.update();
+        }, 120);
+      }
+    },
+  });
 
   // Initial minimap sync
   setTimeout(() => {

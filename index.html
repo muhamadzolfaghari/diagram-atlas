@@ -3,29 +3,137 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Mermaid Studio — Free Browser-Based Mermaid Diagram Editor</title>
-  <meta name="description" content="A free, responsive, browser-based Mermaid diagram editor with CAD-like canvas controls, kinetic panning, starter templates, and SVG/PNG export." />
+  <title>Mermaid Studio — Free Online Mermaid Editor, AI Diagram Generator & CAD Canvas</title>
+  <meta name="description" content="A free, responsive, browser-based Mermaid diagram editor with CAD-like canvas controls, kinetic panning, in-browser AI diagram generation (Qwen2.5-Coder), vector PDF/SVG/PNG export, and 100% offline privacy." />
+  <meta name="keywords" content="mermaid editor, mermaid live editor, online mermaid editor, free mermaid diagram editor, ai mermaid generator, text to diagram ai, sequence diagram generator, mermaid flowchart, mermaid er diagram, mermaid to png, mermaid to pdf, open source diagram studio" />
+  <meta name="author" content="Mohammad Zolfaghari" />
   <meta name="theme-color" content="#080c14" />
+  <link rel="canonical" href="https://muhamadzolfaghari.github.io/mermaid-studio/" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://muhamadzolfaghari.github.io/mermaid-studio/" />
+  <meta property="og:title" content="Mermaid Studio — Free Online Mermaid Editor & AI Diagram Studio" />
+  <meta property="og:description" content="Free, open-source in-browser Mermaid editor with CAD-like canvas controls, local AI generation (Qwen2.5-Coder), vector PDF/SVG/PNG export, and 100% offline privacy." />
+  <meta property="og:image" content="https://muhamadzolfaghari.github.io/mermaid-studio/favicon.svg" />
+  <meta property="og:site_name" content="Mermaid Studio" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://muhamadzolfaghari.github.io/mermaid-studio/" />
+  <meta name="twitter:title" content="Mermaid Studio — Free Online Mermaid Editor & AI Diagram Studio" />
+  <meta name="twitter:description" content="Free browser-based Mermaid editor with CAD canvas controls, in-browser local AI, vector PDF, and high-DPI exports." />
+  <meta name="twitter:image" content="https://muhamadzolfaghari.github.io/mermaid-studio/favicon.svg" />
+
   <!-- Preconnect and Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="./src/styles/design-system.css" />
+  <link rel="stylesheet" href="./src/styles/landing.css" />
   <link rel="stylesheet" href="./src/styles/main.css" />
   <link rel="stylesheet" href="./src/styles/editor.css" />
   <link rel="stylesheet" href="./src/styles/canvas.css" />
   <link rel="stylesheet" href="./src/styles/modal.css" />
+
+  <!-- Structured Data (JSON-LD) for Google Rich Snippets -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Mermaid Studio",
+        "url": "https://muhamadzolfaghari.github.io/mermaid-studio/",
+        "operatingSystem": "All (Web Browser)",
+        "applicationCategory": "DeveloperApplication",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "description": "A free, responsive, browser-based Mermaid diagram editor with CAD-like canvas controls, kinetic panning, in-browser AI generation (Qwen2.5-Coder), vector PDF/SVG/PNG export, and 100% offline privacy.",
+        "featureList": [
+          "CAD/Figma-like interactive canvas with kinetic momentum panning",
+          "Dual AI diagram generation: Instant heuristic & in-browser Qwen2.5-Coder LLM",
+          "Pro Export Studio: Clean SVG, 4K Retina PNG, Vector PDF, Standalone HTML",
+          "Presentation mode with meeting laser pointer and minimap navigation",
+          "100% private and client-side with zero telemetry and no required account"
+        ],
+        "author": {
+          "@type": "Person",
+          "name": "Mohammad Zolfaghari",
+          "url": "https://github.com/muhamadzolfaghari"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Mermaid Studio completely free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Mermaid Studio is 100% free and open-source under the MIT license. There are no paid tiers, subscriptions, paywalls, watermark restrictions, or required accounts."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How does the in-browser AI diagram generator work without an API key?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Mermaid Studio includes a dual-engine AI assistant: an instant heuristic synthesis generator that works immediately with 0 MB download, and a real in-browser Qwen2.5-Coder LLM powered by WebGPU and WebAssembly. It runs 100% locally on your device with complete privacy."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What export formats are supported?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "You can export clean vector SVGs, high-DPI 2x and 4x PNGs, vector PDFs, standalone interactive HTML files with embedded pan/zoom controls, and responsive embed snippets."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How is Mermaid Studio different from Mermaid Live Editor and Mermaid Chart?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Unlike the basic Mermaid Live Editor, Mermaid Studio features CAD/Figma canvas navigation, non-destructive syntax error handling, local AI diagramming, and vector PDF export. Unlike Mermaid Chart, it is 100% free, requires no sign-up, and never sends your diagrams to cloud servers."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I use Mermaid Studio offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The entire application runs client-side in your browser. All diagram rendering, parsing, and exports function without an internet connection."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my diagram data private and secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutely. Mermaid Studio has zero telemetry, zero analytics tracking, and no backend server. All drafts and revision snapshots are saved only in your browser's localStorage."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
-  <div id="app">
-    <!-- Top Header: Mermaid AI / Mermaid Chart Breadcrumb Navigation -->
-    <header class="app-header">
-      <div class="header-left">
-        <div class="brand-badge-logo" aria-hidden="true" title="Mermaid Studio">
-          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+  <!-- Landing Page View (SEO & Discovery) -->
+  <div id="landingView" class="landing-view">
+    <!-- Sticky Navigation -->
+    <header class="landing-nav">
+      <a class="landing-nav-brand" href="#home" title="Mermaid Studio">
+        <div class="landing-nav-brand-logo" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
             <circle cx="9" cy="9" r="3.5" fill="#818cf8"/>
             <circle cx="23" cy="9" r="3.5" fill="#c084fc"/>
             <circle cx="16" cy="23" r="3.5" fill="#38bdf8"/>
@@ -34,6 +142,411 @@
             <path d="M12.5 9 H19.5" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </div>
+        <span class="landing-nav-brand-title">Mermaid Studio</span>
+      </a>
+
+      <nav class="landing-nav-links" aria-label="Main Navigation">
+        <a class="landing-nav-link" href="#features">Features</a>
+        <a class="landing-nav-link" href="#ai-engine">AI Assistant</a>
+        <a class="landing-nav-link" href="#comparison">Compare</a>
+        <a class="landing-nav-link" href="#templates">Diagram Types</a>
+        <a class="landing-nav-link" href="#faq">FAQ</a>
+      </nav>
+
+      <div class="landing-nav-actions">
+        <a class="btn-github-pill" href="https://github.com/muhamadzolfaghari/mermaid-studio" target="_blank" rel="noopener" title="View Source on GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+          <span>Star on GitHub</span>
+        </a>
+        <button class="btn-launch-header" data-action="launch-studio" type="button">
+          <span>Launch Studio</span>
+          <span>⚡</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-glow-orb" aria-hidden="true"></div>
+      <div class="hero-content">
+        <div class="hero-badge-pill">
+          <span>✨</span>
+          <span>100% Free &amp; Open Source • Local AI Powered • Zero Sign-Up</span>
+        </div>
+
+        <h1 class="hero-title">
+          The Modern Visual Studio for <br />
+          <span class="hero-title-gradient">Mermaid Diagrams</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Turn natural language prompts and Mermaid code into polished architectural diagrams, sequence flows, Gantt timelines, and relational schemas. Built with CAD-grade canvas controls and 100% in-browser privacy.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn-hero-primary" data-action="launch-studio" type="button">
+            <span>🚀 Launch Studio (Free Forever)</span>
+          </button>
+          <a class="btn-hero-secondary" href="#demo">
+            <span>⚡ Interactive Playground</span>
+          </a>
+          <a class="btn-hero-secondary" href="https://github.com/muhamadzolfaghari/mermaid-studio" target="_blank" rel="noopener">
+            <span>⭐ View Source Code</span>
+          </a>
+        </div>
+
+        <div class="hero-trust-row">
+          <div class="hero-trust-item">
+            <span>✓</span>
+            <span>Zero Telemetry &amp; 100% Private</span>
+          </div>
+          <div class="hero-trust-item">
+            <span>✓</span>
+            <span>No Account Required</span>
+          </div>
+          <div class="hero-trust-item">
+            <span>✓</span>
+            <span>Vector PDF, SVG &amp; 4K PNG</span>
+          </div>
+          <div class="hero-trust-item">
+            <span>✓</span>
+            <span>Works Fully Offline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Interactive Playground Demo -->
+      <div class="hero-preview-wrapper" id="demo">
+        <div class="hero-preview-bar">
+          <div class="hero-preview-dots" aria-hidden="true">
+            <span class="hero-preview-dot red"></span>
+            <span class="hero-preview-dot yellow"></span>
+            <span class="hero-preview-dot green"></span>
+          </div>
+          <div class="hero-preview-tabs" role="tablist" aria-label="Demo diagram samples">
+            <button class="hero-tab-btn active" type="button" role="tab">Cloud Architecture</button>
+            <button class="hero-tab-btn" type="button" role="tab">OAuth2 Sequence</button>
+            <button class="hero-tab-btn" type="button" role="tab">Database ER</button>
+            <button class="hero-tab-btn" type="button" role="tab">Roadmap Gantt</button>
+          </div>
+          <button class="btn btn-sm btn-primary" data-action="launch-studio" type="button" style="font-size: 11px; padding: 4px 10px;">
+            Open in Studio ↗
+          </button>
+        </div>
+
+        <div class="hero-preview-grid">
+          <pre class="hero-preview-code-pane" id="heroDemoCode" aria-label="Mermaid Source Code"></pre>
+          <div class="hero-preview-stage-pane" id="heroDemoStage" role="region" aria-label="Live Diagram Preview"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section class="features-section" id="features">
+      <div class="section-header">
+        <div class="section-eyebrow">Engineered for Developers &amp; Architects</div>
+        <h2 class="section-title">Everything you need to craft diagrams at the speed of thought</h2>
+        <p class="section-desc">Say goodbye to clunky web editors and expensive SaaS paywalls. Mermaid Studio gives you full CAD visual precision with complete client-side security.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box">🎯</div>
+          <h3 class="feature-title">CAD &amp; Figma-Grade Canvas</h3>
+          <p class="feature-text">Smooth kinetic momentum panning with velocity release, cursor-centered zooming, 2-finger trackpad panning, and touch pinch. Includes an interactive live minimap and laser pointer.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🧠</div>
+          <h3 class="feature-title">Dual In-Browser AI Engine</h3>
+          <p class="feature-text">Generate diagrams from natural language instantly with a 0 MB heuristic engine, or run a real local Qwen2.5-Coder LLM in your browser using WebGPU and WebAssembly. No API keys needed.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">⚡</div>
+          <h3 class="feature-title">Pro Export Studio</h3>
+          <p class="feature-text">Export clean vector SVGs, high-DPI 2x and 4x PNGs, vector PDFs with crisp typography, standalone interactive HTML files, and responsive embed snippets.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🔒</div>
+          <h3 class="feature-title">100% Private &amp; Offline</h3>
+          <p class="feature-text">Zero telemetry, zero analytics tracking, and no backend servers. All your architecture diagrams, drafts, and revision snapshots stay securely inside your browser's local storage.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">📚</div>
+          <h3 class="feature-title">Comprehensive Diagram Support</h3>
+          <p class="feature-text">Complete support for flowcharts, sequence diagrams, class models, state machines, entity relationship schemas, delivery Gantt charts, git graphs, and mindmaps.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🔄</div>
+          <h3 class="feature-title">Non-Destructive Error Guard</h3>
+          <p class="feature-text">Never lose your view to a typo. When Mermaid code contains syntax errors, Mermaid Studio isolates the error banner while keeping your rendered diagram intact on the canvas.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Competitor Comparison Section -->
+    <section class="comparison-section" id="comparison">
+      <div class="comparison-inner">
+        <div class="section-header">
+          <div class="section-eyebrow">Comparison Matrix</div>
+          <h2 class="section-title">How Mermaid Studio compares to existing tools</h2>
+          <p class="section-desc">Built as the modern, privacy-first upgrade to standard live editors and subscription-locked diagramming platforms.</p>
+        </div>
+
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Feature / Capability</th>
+                <th class="col-highlight">🧜‍♀️ Mermaid Studio</th>
+                <th>Mermaid Live Editor</th>
+                <th>Mermaid Chart</th>
+                <th>Eraser.io</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Pricing</strong></td>
+                <td class="col-highlight"><span class="check-green">100% Free / MIT</span></td>
+                <td>Free / Open Source</td>
+                <td><span class="cross-red">$8 - $12/mo</span></td>
+                <td><span class="cross-red">Freemium ($10/mo)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Sign-Up Required</strong></td>
+                <td class="col-highlight"><span class="check-green">No (Instant Access)</span></td>
+                <td>No</td>
+                <td><span class="cross-red">Yes</span></td>
+                <td><span class="cross-red">Yes</span></td>
+              </tr>
+              <tr>
+                <td><strong>In-Browser Local AI (No Key)</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Dual (Instant + Qwen LLM)</span></td>
+                <td><span class="cross-red">✗ None</span></td>
+                <td><span class="cross-red">Cloud AI (Paid)</span></td>
+                <td><span class="cross-red">Cloud AI (Paid)</span></td>
+              </tr>
+              <tr>
+                <td><strong>CAD Canvas (Kinetic &amp; Pinch)</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Kinetic + Minimap</span></td>
+                <td><span class="cross-red">✗ Basic CSS zoom</span></td>
+                <td>Limited</td>
+                <td>✓ Good</td>
+              </tr>
+              <tr>
+                <td><strong>Vector PDF Export</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Yes</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td>Paid Tier Only</td>
+                <td>Paid Tier Only</td>
+              </tr>
+              <tr>
+                <td><strong>Standalone Interactive HTML</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Yes</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+              </tr>
+              <tr>
+                <td><strong>Presentation Mode + Laser Pointer</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Yes</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td>Limited</td>
+                <td>✓ Good</td>
+              </tr>
+              <tr>
+                <td><strong>Privacy &amp; Data Security</strong></td>
+                <td class="col-highlight"><span class="check-green">100% Client-Side Local</span></td>
+                <td>Client-Side</td>
+                <td><span class="cross-red">Hosted Cloud</span></td>
+                <td><span class="cross-red">Hosted Cloud</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diagram Catalog Section -->
+    <section class="catalog-section" id="templates">
+      <div class="section-header">
+        <div class="section-eyebrow">Starter Templates Catalog</div>
+        <h2 class="section-title">Support for every Mermaid diagram type</h2>
+        <p class="section-desc">Jumpstart your architecture diagrams, engineering schedules, and documentation with hand-crafted, production-ready templates.</p>
+      </div>
+
+      <div class="catalog-cards-grid">
+        <div class="catalog-card" data-action="launch-studio" data-template="dependency-overview">
+          <div class="catalog-card-kind">Flowchart</div>
+          <div class="catalog-card-title">Dependency Tree Overview</div>
+          <div class="catalog-card-desc">Milestone progression and delivery dependencies from infrastructure baseline to completion.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="delivery-gantt">
+          <div class="catalog-card-kind">Gantt Roadmap</div>
+          <div class="catalog-card-title">Delivery Sequence Gantt</div>
+          <div class="catalog-card-desc">Engineering resource delivery timelines, QA verification milestones, and release gates.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="service-architecture">
+          <div class="catalog-card-kind">Architecture</div>
+          <div class="catalog-card-title">Microservices Mesh</div>
+          <div class="catalog-card-desc">Multi-service cloud architecture across edge CDN, API gateway, Kafka event streams, and DB tiers.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="sequence-auth">
+          <div class="catalog-card-kind">Sequence</div>
+          <div class="catalog-card-title">OAuth2 PKCE Flow</div>
+          <div class="catalog-card-desc">Detailed authentication sequence with PKCE authorization code exchange and token issuance.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="er-diagram">
+          <div class="catalog-card-kind">Database ER</div>
+          <div class="catalog-card-title">E-Commerce Schema</div>
+          <div class="catalog-card-desc">Relational entity relationship data model for users, orders, products, and payment settlements.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="state-diagram">
+          <div class="catalog-card-kind">State Machine</div>
+          <div class="catalog-card-title">Order Lifecycle States</div>
+          <div class="catalog-card-desc">Finite state machine tracking transitions from draft creation through review, QA, and deployment.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="git-graph">
+          <div class="catalog-card-kind">DevOps</div>
+          <div class="catalog-card-title">Trunk-Based Git Graph</div>
+          <div class="catalog-card-desc">Trunk-based development flow with feature branches, PR reviews, and semantic release tags.</div>
+        </div>
+        <div class="catalog-card" data-action="launch-studio" data-template="mindmap-diagram">
+          <div class="catalog-card-kind">Mindmap</div>
+          <div class="catalog-card-title">System Hierarchy Mindmap</div>
+          <div class="catalog-card-desc">Radial information architecture breaking down subsystems, components, and export pipelines.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+      <div class="section-header">
+        <div class="section-eyebrow">Frequently Asked Questions</div>
+        <h2 class="section-title">Everything you need to know about Mermaid Studio</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item open">
+          <button class="faq-question-btn" type="button">
+            <span>Is Mermaid Studio completely free to use?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes! Mermaid Studio is 100% free and open-source under the MIT license. There are no subscriptions, paywalls, watermark restrictions, or required accounts. You can use it freely for personal, open-source, or commercial projects.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>How does the in-browser AI work without an API key?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Mermaid Studio includes a dual-engine AI assistant: an instant heuristic synthesis generator that works immediately with 0 MB download, and a real in-browser Qwen2.5-Coder LLM powered by WebGPU and WebAssembly. It runs 100% locally on your device with complete privacy.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>What export formats are supported?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            You can export clean vector SVGs, high-DPI 2x and 4x PNGs, vector PDFs with selectable text, standalone interactive HTML files with embedded pan/zoom controls, and responsive embed snippets.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>How is Mermaid Studio different from Mermaid Live Editor and Mermaid Chart?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Unlike the basic Mermaid Live Editor, Mermaid Studio features CAD/Figma canvas navigation, non-destructive syntax error handling, local AI diagramming, and vector PDF export. Unlike Mermaid Chart, it is 100% free, requires no sign-up, and never sends your diagrams to cloud servers.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>Can I use Mermaid Studio offline?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. The entire core application runs client-side in your browser. All diagram rendering, parsing, and exports function without an internet connection.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>Is my diagram data private and secure?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Absolutely. Mermaid Studio has zero telemetry, zero analytics tracking, and no backend server. All drafts and revision snapshots are saved only in your browser's localStorage.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Bottom CTA Banner -->
+    <section class="bottom-cta-section">
+      <div class="bottom-cta-card">
+        <h2 class="bottom-cta-title">Ready to build your next diagram?</h2>
+        <p class="bottom-cta-desc">No accounts, no paywalls. Start drafting architectural diagrams and workflows in seconds.</p>
+        <button class="btn-hero-primary" data-action="launch-studio" type="button" style="margin: 0 auto;">
+          <span>🚀 Launch Mermaid Studio Now</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Landing Footer -->
+    <footer class="landing-footer">
+      <div class="footer-top">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 16px;">🧜‍♀️</span>
+          <strong style="color: #fff; font-size: 14px;">Mermaid Studio</strong>
+          <span>— Free Browser-Based Mermaid Diagram Editor</span>
+        </div>
+        <div class="footer-links">
+          <a class="footer-link" href="#features">Features</a>
+          <a class="footer-link" href="#ai-engine">AI Assistant</a>
+          <a class="footer-link" href="#comparison">Compare</a>
+          <a class="footer-link" href="#faq">FAQ</a>
+          <a class="footer-link" href="https://mermaid.js.org/intro/syntax-reference.html" target="_blank" rel="noopener">Mermaid Syntax Reference ↗</a>
+          <a class="footer-link" href="https://github.com/muhamadzolfaghari/mermaid-studio" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>Released under the MIT License • Built with Mermaid.js &amp; WebGPU • © 2026 Mohammad Zolfaghari</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Studio Workspace Application -->
+  <div id="app" class="studio-hidden">
+    <!-- Top Header: Mermaid AI / Mermaid Chart Breadcrumb Navigation -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="brand-badge-logo" type="button" data-action="open-landing" title="Mermaid Studio Home & Features" style="cursor: pointer; border: none; background: none; padding: 0;">
+          <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+            <circle cx="9" cy="9" r="3.5" fill="#818cf8"/>
+            <circle cx="23" cy="9" r="3.5" fill="#c084fc"/>
+            <circle cx="16" cy="23" r="3.5" fill="#38bdf8"/>
+            <path d="M11.5 10.5 L14 20.5" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+            <path d="M20.5 10.5 L18 20.5" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/>
+            <path d="M12.5 9 H19.5" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="btn btn-sm btn-ghost" data-action="open-landing" type="button" title="View Landing Page & Features" style="font-size: 11px; padding: 3px 8px; margin-right: 4px; border: 1px solid var(--line); border-radius: 6px; color: var(--text-muted); background: var(--surface-2);">
+          🏠 Home
+        </button>
 
         <nav class="breadcrumbs" aria-label="Project and Diagram Breadcrumbs">
           <span class="crumb-root">Mermaid Studio</span>
