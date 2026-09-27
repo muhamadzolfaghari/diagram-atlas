@@ -384,6 +384,55 @@ try {
     failed++;
   }
 
+  // 6. Graphviz DOT Conversion Test
+  const { parseDotToMermaid } = await import('./src/utils/importers/graphviz.js');
+  const dotSample = `digraph G {\n  rankdir=LR;\n  Router -> Auth [label="Verify"];\n  Auth -> DB;\n}`;
+  const convertedDot = parseDotToMermaid(dotSample);
+  if (
+    convertedDot.startsWith('flowchart LR') &&
+    convertedDot.includes('Router -->|"Verify"| Auth') &&
+    convertedDot.includes('Auth --> DB')
+  ) {
+    console.log('✅ [Graphviz DOT] parseDotToMermaid() converts directed graph into Mermaid flowchart.');
+    passed++;
+  } else {
+    console.error('❌ [Graphviz DOT] failed:', convertedDot);
+    failed++;
+  }
+
+  // 7. D2 Lang Conversion Test
+  const { parseD2ToMermaid } = await import('./src/utils/importers/d2.js');
+  const d2Sample = `direction: right\nclient -> server: Get Data\nserver -> database: Query\n`;
+  const convertedD2 = parseD2ToMermaid(d2Sample);
+  if (
+    convertedD2.startsWith('flowchart LR') &&
+    convertedD2.includes('client -->|"Get Data"| server') &&
+    convertedD2.includes('server -->|"Query"| database')
+  ) {
+    console.log('✅ [D2 Lang] parseD2ToMermaid() converts D2 code into Mermaid flowchart.');
+    passed++;
+  } else {
+    console.error('❌ [D2 Lang] failed:', convertedD2);
+    failed++;
+  }
+
+  // 8. SQL DDL Conversion Test
+  const { parseSqlDdlToMermaid } = await import('./src/utils/importers/sql-ddl.js');
+  const sqlSample = `CREATE TABLE users (\n  id INT PRIMARY KEY,\n  email VARCHAR(100)\n);\nCREATE TABLE orders (\n  id INT PRIMARY KEY,\n  user_id INT REFERENCES users(id)\n);`;
+  const convertedSql = parseSqlDdlToMermaid(sqlSample);
+  if (
+    convertedSql.startsWith('erDiagram') &&
+    convertedSql.includes('USERS {') &&
+    convertedSql.includes('ORDERS {') &&
+    convertedSql.includes('USERS ||--o{ ORDERS')
+  ) {
+    console.log('✅ [SQL DDL] parseSqlDdlToMermaid() generates ER diagram entities and relationships.');
+    passed++;
+  } else {
+    console.error('❌ [SQL DDL] failed:', convertedSql);
+    failed++;
+  }
+
 } catch (err) {
   console.error('❌ [Universal Importers] Test Group 7 failed:', err);
   failed++;
