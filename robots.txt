@@ -1,4 +1,4 @@
-# robots.txt for Mermaid Studio
+# robots.txt for NodeFlow
 User-agent: *
 Allow: /
 
