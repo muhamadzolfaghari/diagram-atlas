@@ -541,4 +541,34 @@ body.presentation-active.stage-white #stage {
   transition: opacity 0.1s ease;
 }
 
-
+/* Universal Importer & Converter Modal */
+.import-modal-card {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.import-tab-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.import-tab-btn:hover {
+  color: var(--text);
+  background: var(--surface);
+}
+.import-tab-btn.active {
+  color: var(--primary-light, #818cf8);
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+.xmind-dropzone:hover {
+  border-color: var(--primary-light, #818cf8) !important;
+  background: rgba(99, 102, 241, 0.08) !important;
+}

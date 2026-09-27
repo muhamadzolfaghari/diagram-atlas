@@ -7,6 +7,9 @@ import { AIAssistant } from './components/ai-assistant.js';
 import { MiniMapController } from './components/minimap.js';
 import { initMermaid, renderMermaid, setMermaidTheme } from './utils/mermaid-renderer.js';
 import { LandingPageController } from './components/landing.js';
+import { initImportModal, openImportModal } from './components/import-modal.js';
+import { parseXmindToMermaid, exportMermaidToXmindBlob } from './utils/importers/xmind.js';
+import { parsePlantUmlToMermaid } from './utils/importers/plantuml.js';
 import {
   buttonVariants,
   badgeVariants,
@@ -697,7 +700,16 @@ function bindUIEvents() {
   railTemplatesBtn.addEventListener('click', () => toggleSidebarDrawer('templates'));
   railFilesBtn.addEventListener('click', () => toggleSidebarDrawer('saved'));
   railShortcutsBtn.addEventListener('click', () => openModal('shortcutsModal'));
-  railImportBtn.addEventListener('click', () => fileInput.click());
+  initImportModal({
+    onApply: (code) => {
+      editorCtrl.setValue(code);
+      setTimeout(() => canvasCtrl.fit(true), 120);
+    },
+    getCurrentCode: () => editorCtrl.getValue(),
+  });
+
+  $('headerImportBtn')?.addEventListener('click', () => openImportModal('xmind'));
+  railImportBtn.addEventListener('click', () => openImportModal('xmind'));
 
   $('closeAiDrawerBtn')?.addEventListener('click', closeSidebarDrawer);
   $('closeTemplatesDrawerBtn')?.addEventListener('click', closeSidebarDrawer);
@@ -798,6 +810,33 @@ function bindUIEvents() {
 
   $('proCopyImageBtn')?.addEventListener('click', async () => {
     await copyPngToClipboardDirect();
+  });
+
+  // Export to XMind (.xmind)
+  $('exportXmindDropdownBtn')?.addEventListener('click', async () => {
+    try {
+      const code = editorCtrl.getValue();
+      if (!code.trim().startsWith('mindmap')) {
+        showAlert('To export as XMind (.xmind), diagram must be a Mermaid Mindmap. Use the Universal Importer or select Mindmap template.');
+        return;
+      }
+      editorCtrl.setStatus('rendering', 'Building .xmind…');
+      exportDropdown.style.display = 'none';
+      const blob = await exportMermaidToXmindBlob(code, activeDiagramTitle);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${Exporter.sanitizeFilename(activeDiagramTitle)}.xmind`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      editorCtrl.setStatus('', 'XMind exported! ✅');
+      setTimeout(() => editorCtrl.setStatus('', 'Rendered'), 2000);
+    } catch (err) {
+      editorCtrl.setStatus('error', 'XMind error');
+      showAlert(err.message);
+    }
   });
 
   // Standard Direct Exports
@@ -982,6 +1021,9 @@ function bindUIEvents() {
     } else if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
       e.preventDefault();
       fileInput.click();
+    } else if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+      e.preventDefault();
+      openImportModal('xmind');
     } else if (e.shiftKey && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
       e.preventDefault();
       editorCtrl.formatCode();
@@ -1028,7 +1070,43 @@ function handleFileImport(e) {
   }
 }
 
-function readImportedFile(file) {
+async function readImportedFile(file) {
+  if (file.name.endsWith('.xmind')) {
+    try {
+      editorCtrl.setStatus('rendering', 'Parsing XMind…');
+      const buffer = await file.arrayBuffer();
+      const { mermaidCode, title } = await parseXmindToMermaid(buffer);
+      activeDiagramTitle = title || file.name.replace(/\.[^/.]+$/, '');
+      diagramTitleInput.value = activeDiagramTitle;
+      editorCtrl.setValue(mermaidCode);
+      editorCtrl.setStatus('', 'Imported XMind! ✅');
+      setTimeout(() => {
+        canvasCtrl.fit(true);
+        editorCtrl.setStatus('', 'Rendered');
+      }, 150);
+      return;
+    } catch (err) {
+      editorCtrl.setStatus('error', 'XMind error');
+      showAlert(`Failed to import .xmind file: ${err.message}`);
+      return;
+    }
+  }
+
+  if (file.name.endsWith('.puml') || file.name.endsWith('.plantuml')) {
+    try {
+      const text = await file.text();
+      const mermaidCode = parsePlantUmlToMermaid(text);
+      activeDiagramTitle = file.name.replace(/\.[^/.]+$/, '');
+      diagramTitleInput.value = activeDiagramTitle;
+      editorCtrl.setValue(mermaidCode);
+      setTimeout(() => canvasCtrl.fit(true), 120);
+      return;
+    } catch (err) {
+      showAlert(`Failed to convert PlantUML: ${err.message}`);
+      return;
+    }
+  }
+
   const reader = new FileReader();
   reader.onload = (event) => {
     const code = event.target.result;

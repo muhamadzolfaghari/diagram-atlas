@@ -114,6 +114,22 @@
           },
           {
             "@type": "Question",
+            "name": "Can Mermaid Studio open, read, and export XMind (.xmind) files?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Mermaid Studio includes a 100% free client-side XMind parser and exporter. You can drag and drop any .xmind file (modern XMind ZEN or legacy XMind 8) to convert it into an interactive Mermaid Mindmap, and export any Mermaid Mindmap back to a native .xmind file without an XMind Pro subscription."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I convert PlantUML, Markdown Outlines, or CSV tables to Mermaid?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes. The Universal Importer converts PlantUML sequence and class diagrams, indented Markdown bullet lists, and CSV tabular data into clean Mermaid syntax in one click."
+            }
+          },
+          {
+            "@type": "Question",
             "name": "Is my diagram data private and secure?",
             "acceptedAnswer": {
               "@type": "Answer",
@@ -306,6 +322,7 @@
                 <th>Feature / Capability</th>
                 <th class="col-highlight">🧜‍♀️ Mermaid Studio</th>
                 <th>Mermaid Live Editor</th>
+                <th>XMind Pro</th>
                 <th>Mermaid Chart</th>
                 <th>Eraser.io</th>
               </tr>
@@ -315,6 +332,7 @@
                 <td><strong>Pricing</strong></td>
                 <td class="col-highlight"><span class="check-green">100% Free / MIT</span></td>
                 <td>Free / Open Source</td>
+                <td><span class="cross-red">$59.99 / year</span></td>
                 <td><span class="cross-red">$8 - $12/mo</span></td>
                 <td><span class="cross-red">Freemium ($10/mo)</span></td>
               </tr>
@@ -324,6 +342,23 @@
                 <td>No</td>
                 <td><span class="cross-red">Yes</span></td>
                 <td><span class="cross-red">Yes</span></td>
+                <td><span class="cross-red">Yes</span></td>
+              </tr>
+              <tr>
+                <td><strong>XMind (.xmind) Import &amp; Export</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Yes (Bi-directional)</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td>Native app only</td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+              </tr>
+              <tr>
+                <td><strong>PlantUML Converter</strong></td>
+                <td class="col-highlight"><span class="check-green">✓ Built-in</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
               </tr>
               <tr>
                 <td><strong>In-Browser Local AI (No Key)</strong></td>
@@ -331,18 +366,21 @@
                 <td><span class="cross-red">✗ None</span></td>
                 <td><span class="cross-red">Cloud AI (Paid)</span></td>
                 <td><span class="cross-red">Cloud AI (Paid)</span></td>
+                <td><span class="cross-red">Cloud AI (Paid)</span></td>
               </tr>
               <tr>
                 <td><strong>CAD Canvas (Kinetic &amp; Pinch)</strong></td>
                 <td class="col-highlight"><span class="check-green">✓ Kinetic + Minimap</span></td>
                 <td><span class="cross-red">✗ Basic CSS zoom</span></td>
+                <td>Proprietary map</td>
                 <td>Limited</td>
                 <td>✓ Good</td>
               </tr>
               <tr>
                 <td><strong>Vector PDF Export</strong></td>
-                <td class="col-highlight"><span class="check-green">✓ Yes</span></td>
+                <td class="col-highlight"><span class="check-green">✓ Yes (Print-Ready)</span></td>
                 <td><span class="cross-red">✗ No</span></td>
+                <td>Paid Tier Only</td>
                 <td>Paid Tier Only</td>
                 <td>Paid Tier Only</td>
               </tr>
@@ -352,11 +390,13 @@
                 <td><span class="cross-red">✗ No</span></td>
                 <td><span class="cross-red">✗ No</span></td>
                 <td><span class="cross-red">✗ No</span></td>
+                <td><span class="cross-red">✗ No</span></td>
               </tr>
               <tr>
                 <td><strong>Presentation Mode + Laser Pointer</strong></td>
                 <td class="col-highlight"><span class="check-green">✓ Yes</span></td>
                 <td><span class="cross-red">✗ No</span></td>
+                <td>Pitch Mode (Paid)</td>
                 <td>Limited</td>
                 <td>✓ Good</td>
               </tr>
@@ -364,6 +404,7 @@
                 <td><strong>Privacy &amp; Data Security</strong></td>
                 <td class="col-highlight"><span class="check-green">100% Client-Side Local</span></td>
                 <td>Client-Side</td>
+                <td>Local app</td>
                 <td><span class="cross-red">Hosted Cloud</span></td>
                 <td><span class="cross-red">Hosted Cloud</span></td>
               </tr>
@@ -485,6 +526,26 @@
 
         <div class="faq-item">
           <button class="faq-question-btn" type="button">
+            <span>Can Mermaid Studio open, read, and export XMind (.xmind) files?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes! Mermaid Studio includes a built-in client-side XMind parser and exporter. You can drag and drop any <code>.xmind</code> file (modern XMind ZEN or legacy XMind 8) to convert it into an interactive Mermaid Mindmap, and export any Mermaid Mindmap back to a native <code>.xmind</code> workbook without paying for XMind Pro.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
+            <span>Can I convert PlantUML, Markdown Outlines, or CSV tables to Mermaid?</span>
+            <span class="faq-icon">▼</span>
+          </button>
+          <div class="faq-answer">
+            Yes. The Universal Importer converts PlantUML sequence and class diagrams, indented Markdown bullet lists, and CSV tabular data into clean Mermaid syntax in one click.
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question-btn" type="button">
             <span>Is my diagram data private and secure?</span>
             <span class="faq-icon">▼</span>
           </button>
@@ -599,6 +660,12 @@
           <option value="base">Theme: Base</option>
         </select>
 
+        <!-- Universal Importer Trigger (XMind, PlantUML, Outline) -->
+        <button id="headerImportBtn" class="btn btn-secondary" type="button" title="Universal Importer: XMind, PlantUML, Outline, CSV (Ctrl+I)">
+          <span>📥</span>
+          <span>Import / Convert</span>
+        </button>
+
         <!-- Presentation Mode Trigger -->
         <button id="presentBtn" class="btn btn-secondary" type="button" title="Enter Distraction-Free Presentation Mode (Key: P)">
           <span>🖥️</span>
@@ -620,6 +687,10 @@
               <span>📋 Copy Image to Clipboard</span>
             </button>
             <hr style="border: none; border-top: 1px solid var(--line); margin: 4px 0;" />
+            <button id="exportXmindDropdownBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
+              <span>🧠 Export to XMind (.xmind)</span>
+              <span class="badge" style="margin-left: auto; font-size: 9px; padding: 1px 5px; background: rgba(99, 102, 241, 0.2); color: #818cf8; border-radius: 4px;">PRO</span>
+            </button>
             <button id="exportSvgBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 8px 10px; margin-bottom: 3px;">
               <span>🖼️ Download SVG (Vector)</span>
             </button>
@@ -642,7 +713,7 @@
           </div>
         </div>
 
-        <input type="file" id="fileInput" accept=".mmd,.txt,.mermaid" style="display: none;" />
+        <input type="file" id="fileInput" accept=".mmd,.txt,.mermaid,.xmind,.puml,.plantuml" style="display: none;" />
 
         <!-- User Profile Avatar & Popover -->
         <div style="position: relative;">

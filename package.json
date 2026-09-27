@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.85",
+    "jszip": "^3.10.2",
     "mermaid": "^11.4.1"
   },
   "devDependencies": {

@@ -290,6 +290,105 @@ try {
   failed++;
 }
 
+// --- Test Group 7: Universal Importers & XMind Engine ---
+console.log('\n--- Test Group 7: Universal Importers & XMind Engine ---');
+try {
+  const { parseXmindToMermaid, exportMermaidToXmindBlob, createSampleXmindData } = await import('./src/utils/importers/xmind.js');
+  const { parsePlantUmlToMermaid } = await import('./src/utils/importers/plantuml.js');
+  const { parseOutline } = await import('./src/utils/importers/markdown-outline.js');
+  const { parseCsvToMermaid } = await import('./src/utils/importers/csv-table.js');
+  const JSZip = (await import('jszip')).default;
+
+  // 1. XMind Parse Test
+  const sampleData = createSampleXmindData();
+  const zip = new JSZip();
+  zip.file('content.json', JSON.stringify(sampleData));
+  const zipBuffer = await zip.generateAsync({ type: 'uint8array' });
+  const xmindResult = await parseXmindToMermaid(zipBuffer);
+
+  if (
+    xmindResult.mermaidCode.startsWith('mindmap') &&
+    xmindResult.mermaidCode.includes('Cloud Native Application') &&
+    xmindResult.mermaidCode.includes('Frontend Client')
+  ) {
+    console.log('✅ [XMind Importer] parseXmindToMermaid() accurately parses .xmind zip tree into Mermaid mindmap.');
+    passed++;
+  } else {
+    console.error('❌ [XMind Importer] parseXmindToMermaid() failed:', xmindResult);
+    failed++;
+  }
+
+  // 2. XMind Export Test
+  const mindmapMmd = `mindmap\n  root((Project Planning))\n    ["Frontend Client"]\n      ["Vite 6"]\n    ["Backend API"]\n`;
+  const xmindBlob = await exportMermaidToXmindBlob(mindmapMmd, 'Project Planning');
+  const exportedZip = new JSZip();
+  const exportedZipContent = await exportedZip.loadAsync(await xmindBlob.arrayBuffer());
+  const contentFile = exportedZipContent.file('content.json');
+  const parsedExportedJson = JSON.parse(await contentFile.async('text'));
+
+  if (
+    parsedExportedJson[0]?.rootTopic?.title === 'Project Planning' &&
+    parsedExportedJson[0]?.rootTopic?.children?.attached?.length === 2
+  ) {
+    console.log('✅ [XMind Exporter] exportMermaidToXmindBlob() successfully builds valid XMind ZEN JSON workbook archive.');
+    passed++;
+  } else {
+    console.error('❌ [XMind Exporter] exportMermaidToXmindBlob() failed:', parsedExportedJson);
+    failed++;
+  }
+
+  // 3. PlantUML Sequence Conversion Test
+  const pumlSample = `@startuml\nautonumber\nactor Client\nparticipant Server\nClient -> Server: GET /health\nServer --> Client: 200 OK\n@enduml`;
+  const convertedPuml = parsePlantUmlToMermaid(pumlSample);
+  if (
+    convertedPuml.startsWith('sequenceDiagram') &&
+    convertedPuml.includes('autonumber') &&
+    convertedPuml.includes('Client->>Server: GET /health') &&
+    convertedPuml.includes('Server-->>Client: 200 OK')
+  ) {
+    console.log('✅ [PlantUML Converter] parsePlantUmlToMermaid() accurately converts sequence diagram.');
+    passed++;
+  } else {
+    console.error('❌ [PlantUML Converter] failed:', convertedPuml);
+    failed++;
+  }
+
+  // 4. Markdown Outline Conversion Test
+  const outlineSample = `System Architecture\n- Client Layer\n  - React App\n- Server Layer\n  - Node API\n`;
+  const convertedOutline = parseOutline(outlineSample, 'mindmap');
+  if (
+    convertedOutline.startsWith('mindmap') &&
+    convertedOutline.includes('root(("System Architecture"))') &&
+    convertedOutline.includes('Client Layer')
+  ) {
+    console.log('✅ [Markdown Outline] parseOutline() parses nested bullet lists into Mermaid mindmap.');
+    passed++;
+  } else {
+    console.error('❌ [Markdown Outline] failed:', convertedOutline);
+    failed++;
+  }
+
+  // 5. CSV Tabular Data Conversion Test
+  const csvSample = `From,To,Action\nClient,Gateway,HTTPS Request\nGateway,Auth,Token Verify\n`;
+  const convertedCsv = parseCsvToMermaid(csvSample);
+  if (
+    convertedCsv.startsWith('flowchart LR') &&
+    convertedCsv.includes('Client') &&
+    convertedCsv.includes('Gateway') &&
+    convertedCsv.includes('Token Verify')
+  ) {
+    console.log('✅ [CSV Converter] parseCsvToMermaid() converts tabular rows into Mermaid flowchart connections.');
+    passed++;
+  } else {
+    console.error('❌ [CSV Converter] failed:', convertedCsv);
+    failed++;
+  }
+
+} catch (err) {
+  console.error('❌ [Universal Importers] Test Group 7 failed:', err);
+  failed++;
+}
+
 console.log(`\n========================================`);
 console.log(`Total checks passed: ${passed}, failed: ${failed}`);
 console.log(`========================================\n`);

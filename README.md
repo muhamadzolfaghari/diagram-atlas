@@ -15,6 +15,12 @@ A free, responsive, browser-based [Mermaid](https://mermaid.js.org/) diagram edi
   - Comprehensive feature deep-dives and developer workflow guides.
   - Interactive FAQ accordion indexed with Google JSON-LD schema for rich search snippets.
   - Complete competitive comparison matrix against legacy and cloud diagramming tools.
+- **Universal Importer & Diagram Converter (100% Free)**:
+  - **XMind (.xmind) Import & Export**: Unpacks modern XMind (.xmind / ZEN) and legacy XMind 8 files in-browser with zero telemetry. Automatically translates topics into Mermaid Mindmaps and exports Mermaid Mindmaps back to compliant `.xmind` archives!
+  - **PlantUML Converter**: Convert PlantUML `@startuml` sequence, class, and state diagrams into Mermaid syntax in 1 click.
+  - **Markdown Outlines & OPML**: Transform indented bullet lists into hierarchical Mindmaps or Flowcharts.
+  - **CSV / Tabular Data**: Convert CSV data rows into Flowchart relationship graphs or Entity-Relationship (ER) schemas.
+  - **Drag-and-Drop Everywhere**: Drop `.xmind`, `.mmd`, or `.puml` files directly onto the editor or canvas.
 - **Dual In-Browser AI Diagram Assistant**:
   - **Instant Heuristic Engine**: 0 MB download, runs instantly anywhere with natural language prompts.
   - **Local Qwen2.5-Coder (0.5B) LLM**: 100% private, executes in your browser via WebGPU and WebAssembly. No API keys or paid subscriptions required!
@@ -30,6 +36,7 @@ A free, responsive, browser-based [Mermaid](https://mermaid.js.org/) diagram edi
   - **Clean Vector SVG**: Scalable vector graphics with accurate bounding boxes.
   - **High-DPI PNG (2x & 4x Retina)**: Crisp, high-resolution rasterization.
   - **Vector PDF Export**: Single-click PDF export with sharp typography and zero blur.
+  - **XMind (.xmind) Export**: Download diagrams as true native XMind workbooks for XMind 2024 / mobile.
   - **Standalone Interactive HTML**: Self-contained single-file HTML bundle with embedded pan/zoom controls.
   - **Presentation Mode**: Distraction-free meeting mode with laser pointer (`L`).
   - **Direct .mmd Import / Export**: Open local `.mmd` or `.txt` files via file picker or drag-and-drop.
@@ -46,16 +53,18 @@ A free, responsive, browser-based [Mermaid](https://mermaid.js.org/) diagram edi
 
 ## 📊 Competitive Comparison
 
-| Feature / Capability | 🧜‍♀️ **Mermaid Studio** | **Mermaid Live Editor** | **Mermaid Chart** | **Eraser.io** |
-| :--- | :--- | :--- | :--- | :--- |
-| **Pricing** | **100% Free / MIT** | Free / Open Source | $8 - $12 / mo | Freemium ($10/mo) |
-| **Account Required** | **None (Instant Access)** | None | Yes | Yes |
-| **Local In-Browser AI** | **✓ Dual (Instant + Qwen LLM)** | ✗ None | Cloud AI (Paid) | Cloud AI (Paid) |
-| **CAD Canvas Controls** | **✓ Kinetic Pan, Minimap, Pinch** | ✗ Basic CSS zoom | Limited | ✓ Good |
-| **Vector PDF Export** | **✓ Yes (Built-in)** | ✗ No | Paid Tier Only | Paid Tier Only |
-| **Interactive Standalone HTML** | **✓ Yes (Self-Contained)** | ✗ No | ✗ No | ✗ No |
-| **Presentation Mode + Laser** | **✓ Yes** | ✗ No | Limited | ✓ Good |
-| **Data Privacy** | **100% Client-Side / Offline** | Client-Side | Cloud Hosted | Cloud Hosted |
+| Feature / Capability | 🧜‍♀️ **Mermaid Studio** | **Mermaid Live Editor** | **XMind Pro** | **Mermaid Chart** | **Eraser.io** |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Pricing** | **100% Free / MIT** | Free / Open Source | $59.99 / yr | $8 - $12 / mo | Freemium ($10/mo) |
+| **Account Required** | **None (Instant Access)** | None | Yes | Yes | Yes |
+| **XMind (.xmind) Import/Export** | **✓ Yes (Bi-directional)** | ✗ No | Native app only | ✗ No | ✗ No |
+| **PlantUML Converter** | **✓ Built-in** | ✗ No | ✗ No | ✗ No | ✗ No |
+| **Local In-Browser AI** | **✓ Dual (Instant + Qwen LLM)** | ✗ None | Cloud AI (Paid) | Cloud AI (Paid) | Cloud AI (Paid) |
+| **CAD Canvas Controls** | **✓ Kinetic Pan, Minimap, Pinch** | ✗ Basic CSS zoom | Proprietary map | Limited | ✓ Good |
+| **Vector PDF Export** | **✓ Yes (Print-Ready)** | ✗ No | Paid Tier Only | Paid Tier Only | Paid Tier Only |
+| **Interactive Standalone HTML** | **✓ Yes (Self-Contained)** | ✗ No | ✗ No | ✗ No | ✗ No |
+| **Presentation Mode + Laser** | **✓ Yes** | ✗ No | Pitch Mode (Paid) | Limited | ✓ Good |
+| **Data Privacy** | **100% Client-Side / Offline** | Client-Side | Local app | Cloud Hosted | Cloud Hosted |
 
 ---
 
