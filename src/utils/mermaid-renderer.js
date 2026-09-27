@@ -1,13 +1,27 @@
 import mermaid from 'mermaid';
+import { renderGraphvizWasm } from './wasm/wasm-accelerator.js';
 
 /**
- * Mermaid renderer manager for Mermaid Studio
+ * Mermaid & WebAssembly Graphviz renderer manager for NodeFlow
  * Provides theme initialization, pre-parse syntax validation,
- * and non-destructive rendering.
+ * and dual-engine rendering (Mermaid + Native Graphviz WebAssembly).
  */
 
 let currentTheme = 'dark';
 let renderSequence = 0;
+
+/**
+ * Check if the diagram source is Graphviz DOT syntax
+ * @param {string} code
+ * @returns {boolean}
+ */
+export function isGraphvizDot(code) {
+  if (!code || typeof code !== 'string') return false;
+  const clean = code.replace(/---[\s\S]*?---/, '').trim();
+  const firstLine = clean.split('\n')[0] || '';
+  // Match standard Graphviz digraph, graph, strict digraph, strict graph
+  return /^\s*(strict\s+)?(di)?graph\b/i.test(firstLine) && /[{;]/.test(clean);
+}
 
 export function initMermaid(theme = 'dark') {
   currentTheme = theme;
@@ -60,7 +74,7 @@ export function getMermaidTheme() {
 }
 
 /**
- * Validates and renders mermaid source code into the target container.
+ * Validates and renders mermaid or native Graphviz source code into the target container.
  * If syntax is invalid, returns { success: false, error } without clearing the existing SVG!
  */
 export async function renderMermaid(container, code) {
@@ -70,6 +84,28 @@ export async function renderMermaid(container, code) {
     return { success: false, error: 'Empty diagram source' };
   }
 
+  // 1. Native Graphviz WebAssembly Path
+  if (isGraphvizDot(code)) {
+    try {
+      const svg = await renderGraphvizWasm(code);
+      if (seq !== renderSequence) {
+        return { success: false, aborted: true };
+      }
+      container.classList.remove('is-gantt');
+      container.innerHTML = svg;
+      return {
+        success: true,
+        svg,
+        isGraphviz: true,
+        engine: 'Graphviz C Engine (WebAssembly)',
+      };
+    } catch (gvErr) {
+      const errorMsg = gvErr?.message || String(gvErr);
+      return { success: false, error: cleanErrorMessage(errorMsg), isGraphviz: true };
+    }
+  }
+
+  // 2. Standard Mermaid Path
   // Pre-validate syntax to prevent crashing or displaying default Mermaid error SVG
   try {
     const parseResult = await mermaid.parse(code, { suppressErrors: true });
@@ -80,6 +116,7 @@ export async function renderMermaid(container, code) {
     const errorMsg = parseErr?.message || parseErr?.str || String(parseErr);
     return { success: false, error: cleanErrorMessage(errorMsg) };
   }
+
 
   try {
     const id = `mermaid-render-${seq}`;

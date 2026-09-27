@@ -339,6 +339,63 @@ flowchart TD
       Retina 2x PNG Export
       Direct .mmd Download
 `
+  },
+  {
+    id: 'graphviz-k8s-mesh',
+    title: 'Kubernetes Cluster & Service Mesh (Native Graphviz Wasm)',
+    category: 'Architecture & Delivery',
+    kind: 'graphviz',
+    description: 'Cloud native service mesh and ingress clusters rendered directly using WebAssembly Graphviz C engine.',
+    code: `digraph KubernetesMesh {
+  rankdir=TB;
+  bgcolor="transparent";
+  fontname="Helvetica,Arial,sans-serif";
+  node [fontname="Helvetica,Arial,sans-serif", shape=box, style="filled,rounded", fillcolor="#1e293b", fontcolor="#f8fafc", color="#38bdf8", penwidth=1.5];
+  edge [fontname="Helvetica,Arial,sans-serif", color="#94a3b8", fontcolor="#cbd5e1"];
+
+  subgraph cluster_ingress {
+    label = "Edge Ingress Gateway";
+    style = "filled,dashed";
+    fillcolor = "#0f172a";
+    fontcolor = "#38bdf8";
+    color = "#0284c7";
+
+    CloudFlare [label="Cloudflare CDN\\n(Edge TLS 1.3)", fillcolor="#334155", shape=ellipse];
+    EnvoyProxy [label="Envoy Proxy / Traefik\\n(Layer 7 Router)", fillcolor="#0369a1"];
+  }
+
+  subgraph cluster_services {
+    label = "Kubernetes Pod Mesh";
+    style = "filled";
+    fillcolor = "#0f172a";
+    fontcolor = "#a855f7";
+    color = "#7e22ce";
+
+    AuthService [label="Auth Service\\n(OAuth 2.1 / Wasm Guard)", fillcolor="#4c1d95"];
+    DiagramEngine [label="NodeFlow Kernel\\n(WebAssembly Runner)", fillcolor="#065f46", color="#10b981"];
+    ExportWorker [label="Rasterizer Worker\\n(SIMD Compositor)", fillcolor="#1e3a8a", color="#60a5fa"];
+  }
+
+  subgraph cluster_data {
+    label = "Distributed Storage Tier";
+    style = "filled";
+    fillcolor = "#0f172a";
+    fontcolor = "#f59e0b";
+    color = "#b45309";
+
+    RedisCache [label="Redis Cluster\\n(In-Memory State)", shape=cylinder, fillcolor="#7c2d12"];
+    PostgresDB [label="PostgreSQL Primary\\n(Vector & Metadata)", shape=cylinder, fillcolor="#1e3a8a"];
+  }
+
+  CloudFlare -> EnvoyProxy [label="HTTPS / HTTP3"];
+  EnvoyProxy -> AuthService [label="gRPC Verify"];
+  EnvoyProxy -> DiagramEngine [label="WebSocket / SSE"];
+  DiagramEngine -> ExportWorker [label="Task Queue"];
+  DiagramEngine -> RedisCache [label="Fast Hash Key"];
+  AuthService -> PostgresDB [label="User Schema"];
+  ExportWorker -> RedisCache [label="Cache Snapshot"];
+}
+`
   }
 ];
 

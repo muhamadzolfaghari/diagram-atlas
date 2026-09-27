@@ -34,6 +34,19 @@ let failed = 0;
 console.log('--- Test Group 1: Starter Diagram Templates ---');
 for (const tpl of DIAGRAM_TEMPLATES) {
   try {
+    if (tpl.kind === 'graphviz') {
+      const { renderGraphvizWasm } = await import('./src/utils/wasm/wasm-accelerator.js');
+      const svg = await renderGraphvizWasm(tpl.code);
+      if (svg && svg.includes('<svg')) {
+        console.log(`✅ [Template] "${tpl.title}" (${tpl.kind}) compiled with native Wasm Graphviz.`);
+        passed++;
+      } else {
+        console.error(`❌ [Template] "${tpl.title}" failed to compile in Wasm.`);
+        failed++;
+      }
+      continue;
+    }
+
     const valid = await mermaid.parse(tpl.code);
     if (valid !== false) {
       console.log(`✅ [Template] "${tpl.title}" (${tpl.kind}) passed syntax check.`);
@@ -668,6 +681,29 @@ try {
     passed++;
   } else {
     console.error('❌ [Wasm Pixel Processing] failed:', mockPixelData);
+    failed++;
+  }
+
+  // 5. WebAssembly Real-time Benchmark Runner Test
+  const { runWasmBenchmark } = await import('./src/utils/wasm/wasm-accelerator.js');
+  const benchMetrics = await runWasmBenchmark();
+  if (benchMetrics && benchMetrics.hash.speedup > 0 && benchMetrics.pixel.speedup > 0) {
+    console.log(`✅ [Wasm Benchmark Suite] runWasmBenchmark() executed: Hash Speedup=${benchMetrics.hash.speedup}x, Pixel Speedup=${benchMetrics.pixel.speedup}x.`);
+    passed++;
+  } else {
+    console.error('❌ [Wasm Benchmark Suite] failed:', benchMetrics);
+    failed++;
+  }
+
+  // 6. Graphviz DOT vs Mermaid Syntax Detection
+  const { isGraphvizDot } = await import('./src/utils/mermaid-renderer.js');
+  const isDot1 = isGraphvizDot('digraph Test { a -> b; }');
+  const isDot2 = isGraphvizDot('flowchart TD\n  A --> B');
+  if (isDot1 === true && isDot2 === false) {
+    console.log('✅ [Wasm Syntax Detector] isGraphvizDot() accurately distinguished DOT syntax from Mermaid.');
+    passed++;
+  } else {
+    console.error('❌ [Wasm Syntax Detector] failed:', { isDot1, isDot2 });
     failed++;
   }
 

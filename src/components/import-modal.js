@@ -208,9 +208,14 @@ Gateway --> Client: Bearer Token Response
 
         <!-- TAB 4: GRAPHVIZ DOT -->
         <div id="tabContentGraphviz" class="tab-pane" style="display: none;">
-          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
-            Paste Graphviz DOT (.dot / .gv) Directed Graph:
-          </label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); margin: 0;">
+              Paste Graphviz DOT (.dot / .gv) Directed Graph:
+            </label>
+            <span style="font-size: 11px; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(56, 189, 248, 0.3);">
+              ⚡ WASM C ENGINE READY
+            </span>
+          </div>
           <textarea id="graphvizInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">digraph DistributedSystem {
   rankdir=LR;
   EdgeRouter [label="Cloud Edge Router"];
@@ -222,9 +227,12 @@ Gateway --> Client: Bearer Token Response
   AuthCluster -> KafkaBus [label="Publish Audit"];
   KafkaBus -> Database [label="Sync Commit"];
 }</textarea>
-          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
-            <button id="convertGraphvizBtn" class="btn btn-primary" type="button">
-              <span>Convert DOT ↵</span>
+          <div style="margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;">
+            <button id="loadDirectGraphvizBtn" class="btn btn-secondary" type="button" title="Load directly to render with native WebAssembly Graphviz C engine without conversion">
+              <span>⚡ Load Direct (Wasm C Engine)</span>
+            </button>
+            <button id="convertGraphvizBtn" class="btn btn-primary" type="button" title="Convert DOT to Mermaid Flowchart">
+              <span>🔄 Transpile to Mermaid ↵</span>
             </button>
           </div>
         </div>
@@ -645,6 +653,15 @@ function attachEventListeners(modalEl) {
   });
 
   // 4. Graphviz DOT
+  modalEl.querySelector('#loadDirectGraphvizBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#graphvizInput').value.trim();
+    if (!input) {
+      setStatus('Please paste Graphviz DOT code to load.', 'error');
+      return;
+    }
+    setResult(input, 'Loaded Graphviz DOT for Native WebAssembly C Engine! ⚡');
+  });
+
   modalEl.querySelector('#convertGraphvizBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#graphvizInput').value;
     try {

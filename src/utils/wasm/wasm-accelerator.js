@@ -148,6 +148,7 @@ export async function getWasmCapabilities() {
     threads: typeof SharedArrayBuffer !== 'undefined',
     webgpu: typeof navigator !== 'undefined' && !!navigator.gpu,
     engine: 'NodeFlow Wasm Turbo v1.0',
+    graphvizEngine: 'Graphviz C Engine (@viz-js/viz v3.30.0)',
   };
 
   if (caps.wasm) {
@@ -170,6 +171,92 @@ export async function getWasmCapabilities() {
   return caps;
 }
 
+/**
+ * Execute real-time performance benchmark comparing JavaScript vs WebAssembly
+ * @returns {Promise<object>} Benchmark metrics
+ */
+export async function runWasmBenchmark() {
+  await initWasmEngine();
+  const caps = await getWasmCapabilities();
+
+  // Benchmark 1: FNV-1a Hashing (50,000 iterations)
+  const testPayload = 'flowchart LR\n  Client[Wasm Web Client] --> Gateway[Envoy]\n  Gateway --> Service[NodeFlow High Performance Engine]';
+  const iterations = 50000;
+
+  const t0 = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    jsFastHash(testPayload);
+  }
+  const jsHashTimeMs = performance.now() - t0;
+
+  const t1 = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    wasmFastHash(testPayload);
+  }
+  const wasmHashTimeMs = performance.now() - t1;
+  const hashSpeedup = Number((jsHashTimeMs / Math.max(0.1, wasmHashTimeMs)).toFixed(2));
+
+  // Benchmark 2: Pixel Compositing (100,000 pixels = 400,000 bytes)
+  const pixelCount = 100000;
+  const testPixelsJs = new Uint8ClampedArray(pixelCount * 4);
+  const testPixelsWasm = new Uint8ClampedArray(pixelCount * 4);
+
+  const t2 = performance.now();
+  for (let i = 0; i < testPixelsJs.length; i += 4) {
+    if (testPixelsJs[i + 3] === 0) {
+      testPixelsJs[i] = 255;
+      testPixelsJs[i + 1] = 255;
+      testPixelsJs[i + 2] = 255;
+      testPixelsJs[i + 3] = 255;
+    }
+  }
+  const jsPixelTimeMs = performance.now() - t2;
+
+  const t3 = performance.now();
+  wasmApplyAlphaBackground({ data: testPixelsWasm }, 255, 255, 255);
+  const wasmPixelTimeMs = performance.now() - t3;
+  const pixelSpeedup = Number((jsPixelTimeMs / Math.max(0.1, wasmPixelTimeMs)).toFixed(2));
+
+  // Benchmark 3: Native Graphviz C Layout Engine in Wasm
+  const sampleDot = `digraph BenchGraph {
+    rankdir=LR;
+    node [shape=box];
+    ${Array.from({ length: 25 }, (_, i) => `N${i} -> N${(i * 3 + 1) % 25};`).join('\n    ')}
+  }`;
+  let gvTimeMs = 0;
+  let gvSvgLength = 0;
+  try {
+    const t4 = performance.now();
+    const gvSvg = await renderGraphvizWasm(sampleDot, { engine: 'dot' });
+    gvTimeMs = performance.now() - t4;
+    gvSvgLength = gvSvg.length;
+  } catch {
+    gvTimeMs = -1;
+  }
+
+  return {
+    capabilities: caps,
+    hash: {
+      iterations,
+      jsTimeMs: Math.round(jsHashTimeMs * 10) / 10,
+      wasmTimeMs: Math.round(wasmHashTimeMs * 10) / 10,
+      speedup: hashSpeedup,
+    },
+    pixel: {
+      pixels: pixelCount,
+      jsTimeMs: Math.round(jsPixelTimeMs * 10) / 10,
+      wasmTimeMs: Math.round(wasmPixelTimeMs * 10) / 10,
+      speedup: pixelSpeedup,
+    },
+    graphviz: {
+      nodes: 25,
+      layoutTimeMs: Math.round(gvTimeMs * 10) / 10,
+      svgBytes: gvSvgLength,
+      engine: 'Graphviz C Engine (dot)',
+    },
+  };
+}
+
 function jsFastHash(str) {
   let hash = 0x811c9dc5;
   const s = String(str);
@@ -179,3 +266,4 @@ function jsFastHash(str) {
   }
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
+

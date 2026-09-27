@@ -122,7 +122,9 @@ export class EditorController {
     const firstLine = clean.split('\n')[0] || '';
 
     let type = 'Diagram';
-    if (/^flowchart/i.test(firstLine)) type = 'Flowchart';
+    if (/^(strict\s+)?digraph\b/i.test(firstLine) || (/^(strict\s+)?graph\b/i.test(firstLine) && /[{;]/.test(clean))) {
+      type = '⚡ Graphviz (Wasm)';
+    } else if (/^flowchart/i.test(firstLine)) type = 'Flowchart';
     else if (/^graph/i.test(firstLine)) type = 'Graph';
     else if (/^sequenceDiagram/i.test(firstLine)) type = 'Sequence';
     else if (/^classDiagram/i.test(firstLine)) type = 'Class Diagram';

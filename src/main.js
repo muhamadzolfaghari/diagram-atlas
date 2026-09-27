@@ -10,6 +10,7 @@ import { LandingPageController } from './components/landing.js';
 import { initImportModal, openImportModal } from './components/import-modal.js';
 import { parseXmindToMermaid, exportMermaidToXmindBlob } from './utils/importers/xmind.js';
 import { parsePlantUmlToMermaid } from './utils/importers/plantuml.js';
+import { initWasmModal, openWasmModal } from './components/wasm-benchmark-modal.js';
 import {
   buttonVariants,
   badgeVariants,
@@ -352,7 +353,8 @@ async function handleCodeChange(code) {
 
   if (result.success) {
     hideAlert();
-    editorCtrl.setStatus('', `Rendered (${duration}ms)`);
+    const engineLabel = result.isGraphviz ? '⚡ Graphviz Wasm' : 'Rendered';
+    editorCtrl.setStatus('', `${engineLabel} (${duration}ms)`);
     setSavedIndicator(true);
     StorageManager.saveDraft(code, activeTemplateId);
     canvasCtrl.measure();
@@ -708,6 +710,14 @@ function bindUIEvents() {
     getCurrentCode: () => editorCtrl.getValue(),
   });
 
+  // WebAssembly High-Performance Modal & Benchmarks
+  initWasmModal({
+    onSelectTemplate: (tplId) => selectTemplate(tplId),
+  });
+
+  $('wasmAileronBadge')?.addEventListener('click', () => openWasmModal());
+  $('railWasmBtn')?.addEventListener('click', () => openWasmModal());
+
   $('headerImportBtn')?.addEventListener('click', () => openImportModal('xmind'));
   railImportBtn.addEventListener('click', () => openImportModal('xmind'));
 
@@ -1024,6 +1034,9 @@ function bindUIEvents() {
     } else if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
       e.preventDefault();
       openImportModal('xmind');
+    } else if ((e.shiftKey && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'w') || (e.shiftKey && e.key === 'W' && !isTyping)) {
+      e.preventDefault();
+      openWasmModal();
     } else if (e.shiftKey && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f') {
       e.preventDefault();
       editorCtrl.formatCode();
