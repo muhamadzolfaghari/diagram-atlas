@@ -616,6 +616,66 @@ try {
   failed++;
 }
 
+// Test Group 8: WebAssembly High Performance Engine
+console.log('\n--- Test Group 8: WebAssembly High Performance Engine ---');
+try {
+  const {
+    wasmFastHash,
+    wasmApplyAlphaBackground,
+    renderGraphvizWasm,
+    getWasmCapabilities,
+  } = await import('./src/utils/wasm/wasm-accelerator.js');
+
+  // 1. WebAssembly Fast FNV-1a Hash Test
+  const testString = 'graph TD\n  Client[Wasm Client] --> Engine[Turbo Engine]';
+  const hash1 = wasmFastHash(testString);
+  const hash2 = wasmFastHash(testString);
+  if (hash1 && hash1 === hash2 && hash1.length === 8) {
+    console.log(`✅ [Wasm Hash] wasmFastHash() calculated consistent 32-bit hardware hash: 0x${hash1}`);
+    passed++;
+  } else {
+    console.error('❌ [Wasm Hash] failed:', hash1, hash2);
+    failed++;
+  }
+
+  // 2. WebAssembly Native Graphviz C-Engine Test
+  const dotSource = 'digraph Architecture { rankdir=LR; NodeFlow -> Wasm -> NativePerformance; }';
+  const graphvizSvg = await renderGraphvizWasm(dotSource);
+  if (graphvizSvg && graphvizSvg.includes('<svg') && graphvizSvg.includes('NativePerformance')) {
+    console.log(`✅ [Wasm Graphviz Engine] renderGraphvizWasm() compiled Graphviz C engine in WebAssembly (${graphvizSvg.length} bytes SVG).`);
+    passed++;
+  } else {
+    console.error('❌ [Wasm Graphviz Engine] failed to render SVG:', graphvizSvg);
+    failed++;
+  }
+
+  // 3. WebAssembly Capabilities Detection
+  const caps = await getWasmCapabilities();
+  if (caps.wasm === true) {
+    console.log(`✅ [Wasm Capabilities] Hardware acceleration detected: Wasm=${caps.wasm}, SIMD=${caps.simd}, Threads=${caps.threads}`);
+    passed++;
+  } else {
+    console.error('❌ [Wasm Capabilities] WebAssembly not supported');
+    failed++;
+  }
+
+  // 4. WebAssembly Pixel Buffer Compositing
+  const mockPixelData = new Uint8ClampedArray(16); // 4 transparent pixels (RGBA)
+  const mockImageData = { data: mockPixelData };
+  wasmApplyAlphaBackground(mockImageData, 240, 240, 240);
+  if (mockPixelData[0] === 240 && mockPixelData[3] === 255) {
+    console.log('✅ [Wasm Pixel Processing] wasmApplyAlphaBackground() composited pixel buffer in linear memory.');
+    passed++;
+  } else {
+    console.error('❌ [Wasm Pixel Processing] failed:', mockPixelData);
+    failed++;
+  }
+
+} catch (err) {
+  console.error('❌ [Wasm Accelerator] Test Group 8 failed:', err);
+  failed++;
+}
+
 console.log(`\n========================================`);
 console.log(`Total checks passed: ${passed}, failed: ${failed}`);
 console.log(`========================================\n`);

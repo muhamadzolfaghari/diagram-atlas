@@ -1,15 +1,16 @@
 /**
- * Local storage manager for Mermaid Studio
- * Handles automatic draft saving and a named diagrams library.
+ * Local storage manager for NodeFlow
+ * Handles automatic draft saving, named diagrams library, and WebAssembly-hashed snapshots.
  */
+import { wasmFastHash } from '../utils/wasm/wasm-accelerator.js';
 
 const STORAGE_KEYS = {
-  DRAFT: 'mermaid_studio_draft_v1',
-  SAVED_LIST: 'mermaid_studio_saved_diagrams_v1',
-  THEME: 'mermaid_studio_theme_v1',
-  GRID: 'mermaid_studio_grid_v1',
-  ACTIVE_TEMPLATE: 'mermaid_studio_active_tpl_v1',
-  VERSIONS: 'mermaid_studio_versions_v1',
+  DRAFT: 'nodeflow_draft_v1',
+  SAVED_LIST: 'nodeflow_saved_diagrams_v1',
+  THEME: 'nodeflow_theme_v1',
+  GRID: 'nodeflow_grid_v1',
+  ACTIVE_TEMPLATE: 'nodeflow_active_tpl_v1',
+  VERSIONS: 'nodeflow_versions_v1',
 };
 
 export class StorageManager {
@@ -98,11 +99,13 @@ export class StorageManager {
 
   static saveSnapshot(versionLabel, title, code) {
     const list = this.getSnapshots();
+    const hash = wasmFastHash(code);
     const item = {
       id: `snap_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       version: versionLabel.trim() || `v0.${list.length + 1}`,
       title: title.trim() || 'Untitled',
       code,
+      hash,
       createdAt: new Date().toISOString(),
     };
     list.unshift(item);
