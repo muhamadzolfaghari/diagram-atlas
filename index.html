@@ -120,7 +120,7 @@
     ]
   }
   </script>
-  <script type="module" crossorigin src="/mermaid-studio/assets/index-cC7p8SOv.js"></script>
+  <script type="module" crossorigin src="/mermaid-studio/assets/index-B2T46kez.js"></script>
   <link rel="stylesheet" crossorigin href="/mermaid-studio/assets/index-IXna2Rt9.css">
 </head>
 <body>
@@ -737,9 +737,9 @@
               <span class="saved-dot" id="savedDot"></span>
               <span id="savedLabel">Saved</span>
             </div>
-            <span class="badge" id="wasmAileronBadge" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-size: 10px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; font-weight: 700;" title="Native WebAssembly acceleration active for Graphviz, hashing, and exports">
-              ⚡ WASM
-            </span>
+            <button class="badge" id="wasmAileronBadge" type="button" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-size: 10px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 4px;" title="Native WebAssembly Turbo active. Click to run benchmarks and diagnostics (Shift+W)">
+              <span style="font-size: 11px;">⚡</span> WASM
+            </button>
           </div>
         </nav>
       </div>
@@ -900,6 +900,9 @@
         </div>
 
         <div class="rail-group">
+          <button id="railWasmBtn" class="rail-btn" type="button" title="WebAssembly Diagnostics & Benchmarks (Shift+W)">
+            <span style="font-size: 16px; font-weight: 700; color: #38bdf8;">⚡</span>
+          </button>
           <button id="railImportBtn" class="rail-btn" type="button" title="Import .mmd file (Ctrl+O)">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
