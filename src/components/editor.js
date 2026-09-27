@@ -124,15 +124,31 @@ export class EditorController {
     let type = 'Diagram';
     if (/^(strict\s+)?digraph\b/i.test(firstLine) || (/^(strict\s+)?graph\b/i.test(firstLine) && /[{;]/.test(clean))) {
       type = '⚡ Graphviz (Wasm)';
-    } else if (/^flowchart/i.test(firstLine)) type = 'Flowchart';
-    else if (/^graph/i.test(firstLine)) type = 'Graph';
-    else if (/^sequenceDiagram/i.test(firstLine)) type = 'Sequence';
-    else if (/^classDiagram/i.test(firstLine)) type = 'Class Diagram';
-    else if (/^stateDiagram/i.test(firstLine)) type = 'State Machine';
+    } else if (/^flowchart/i.test(firstLine)) {
+      if (/<<include>>|<<extend>>|actor\b/i.test(clean)) type = 'UML Use Case';
+      else if (/fork|join|decision|condition/i.test(clean) || /\[\*\]/.test(clean)) type = 'UML Activity';
+      else if (/component\b|lollipop|interface/i.test(clean)) type = 'UML Component';
+      else if (/node\b|artifact\b|deployment/i.test(clean)) type = 'UML Deployment';
+      else type = 'Flowchart';
+    } else if (/^graph/i.test(firstLine)) type = 'Graph';
+    else if (/^sequenceDiagram/i.test(firstLine)) type = 'UML Sequence';
+    else if (/^classDiagram/i.test(firstLine)) {
+      if (/<<metaclass>>|<<stereotype>>/i.test(clean)) type = 'UML Profile';
+      else if (/:\s*[A-Z]\w*\s*\{/i.test(clean)) type = 'UML Object';
+      else type = 'UML Class';
+    } else if (/^stateDiagram/i.test(firstLine)) type = 'UML State Machine';
     else if (/^erDiagram/i.test(firstLine)) type = 'ER Schema';
     else if (/^gitGraph/i.test(firstLine)) type = 'Git Graph';
-    else if (/^gantt/i.test(firstLine)) type = 'Gantt';
+    else if (/^gantt/i.test(firstLine)) type = 'Gantt Roadmap';
     else if (/^mindmap/i.test(firstLine)) type = 'Mindmap';
+    else if (/^journey/i.test(firstLine)) type = 'User Journey';
+    else if (/^kanban/i.test(firstLine)) type = 'Kanban Board';
+    else if (/^quadrantChart/i.test(firstLine)) type = 'Quadrant Matrix';
+    else if (/^timeline/i.test(firstLine)) type = 'Timeline Roadmap';
+    else if (/^sankey/i.test(firstLine)) type = 'Sankey Funnel';
+    else if (/^block/i.test(firstLine)) type = 'Block Architecture';
+    else if (/^xychart/i.test(firstLine)) type = 'XY Metric Chart';
+    else if (/^C4/i.test(firstLine)) type = 'C4 Architecture';
     else if (/^pie/i.test(firstLine)) type = 'Pie Chart';
     else if (/^architecture/i.test(firstLine)) type = 'Architecture';
 

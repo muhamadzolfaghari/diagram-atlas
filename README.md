@@ -48,6 +48,24 @@ Many industry diagram tools lock essential export capabilities, format conversio
   - **Markdown Outlines & OPML**: Transforms indented bullet lists into hierarchical Mindmaps or Flowcharts.
   - **CSV / Tabular Data**: Converts CSV data rows into Flowchart relationship graphs or ER schemas.
   - **Drag-and-Drop Everywhere**: Drop `.xmind`, `.drawio`, `.puml`, `.d2`, `.sql`, `.graphql`, `.bpmn`, `.tf`, or `.mmd` files directly onto the editor or canvas.
+- **Complete UML 2.5 Specification (All 14 Official Diagrams)**:
+  - **Structure Diagrams**: Class Diagram, Object Diagram, Component Diagram, Deployment Diagram, Package Diagram, Composite Structure Diagram, Profile Diagram.
+  - **Behavior Diagrams**: Use Case Diagram, Activity Diagram, State Machine Diagram.
+  - **Interaction Diagrams**: Sequence Diagram, Timing Diagram, Communication Diagram, Interaction Overview Diagram.
+- **Product Management & Design Thinking Diagrams**:
+  - **User Journey Maps** (`journey`): Multi-actor phases with emotional satisfaction curves (1–5).
+  - **Agile Kanban Boards** (`kanban`): Story point estimation, columns, and task priority cards.
+  - **Feature Prioritization Quadrant** (`quadrantChart`): Value vs Effort and Eisenhower decision matrices.
+  - **Gantt Delivery Roadmaps** (`gantt`): Critical path milestones and QA delivery sequences.
+  - **Ideation Mindmaps** (`mindmap`): Multi-tier brainstorming and strategic OKRs.
+  - **Root Cause Analysis** (`flowchart`): 6M Fishbone / Ishikawa engineering diagrams.
+  - **Conversion Funnels** (`sankey-beta`): User acquisition, retention, and drop-off flow visualization.
+  - **Product Timelines** (`timeline`): Multi-quarter release roadmaps and version schedules.
+- **Enterprise Architecture & Systems**:
+  - **C4 Model Architecture** (`C4Context`): Context, containers, and external banking dependencies.
+  - **Kubernetes Cluster Topology** (`graphviz` DOT): Native WebAssembly C engine rendering.
+  - **Hardware Bus & Chip Architecture** (`block-beta`): CPU, memory interconnects, and DMA controllers.
+  - **API Latency & SLA Performance Metrics** (`xychart-beta`): Percentile response time distributions.
 - **Dual In-Browser AI Diagram Assistant**:
   - **Instant Heuristic Engine**: 0 MB download, runs instantly anywhere with natural language prompts.
   - **Local Qwen2.5-Coder (0.5B) LLM**: 100% private, executes in your browser via WebGPU and WebAssembly. No API keys or paid subscriptions required!
