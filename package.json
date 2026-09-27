@@ -1,7 +1,7 @@
 {
-  "name": "mermaid-studio",
+  "name": "nodeflow-studio",
   "version": "1.0.0",
-  "description": "A free, responsive, browser-based Mermaid diagram editor with CAD-like canvas controls, starter templates, and export tools.",
+  "description": "NodeFlow — Free universal visual diagramming studio supporting Mermaid, XMind, Draw.io, PlantUML, Graphviz, D2, SQL DDL, and Markdown.",
   "type": "module",
   "scripts": {
     "dev": "vite",

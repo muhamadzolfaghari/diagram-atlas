@@ -18,7 +18,7 @@ const { DIAGRAM_TEMPLATES } = await import('./src/components/templates.js');
 import fs from 'fs';
 import path from 'path';
 
-console.log('🧪 Starting Mermaid Studio Verification Suite...\n');
+console.log('🧪 Starting NodeFlow Verification Suite...\n');
 
 mermaid.initialize({
   startOnLoad: false,
@@ -94,7 +94,7 @@ if (!fs.existsSync('./dist/index.html')) {
     { name: 'Stage canvas element present', check: distHtml.includes('id="stage"') },
     { name: 'Diagram container present', check: distHtml.includes('id="diagram-container"') },
     { name: 'Code editor present', check: distHtml.includes('id="codeEditor"') },
-    { name: 'SEO title present', check: distHtml.includes('<title>Mermaid Studio') },
+    { name: 'SEO title present', check: distHtml.includes('<title>NodeFlow') },
     { name: 'SEO meta description present', check: distHtml.includes('name="description"') },
   ];
 
@@ -430,6 +430,46 @@ try {
     passed++;
   } else {
     console.error('❌ [SQL DDL] failed:', convertedSql);
+    failed++;
+  }
+
+  // 9. Draw.io XML Conversion Test
+  const { parseDrawioToMermaid } = await import('./src/utils/importers/drawio.js');
+  const drawioSample = `<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/><mxCell id="2" value="App" vertex="1" parent="1"/><mxCell id="3" value="DB" vertex="1" parent="1"/><mxCell id="4" value="Query" edge="1" source="2" target="3" parent="1"/></root></mxGraphModel>`;
+  const convertedDrawio = parseDrawioToMermaid(drawioSample);
+  if (
+    convertedDrawio.startsWith('flowchart TD') &&
+    convertedDrawio.includes('node_2["App"]') &&
+    convertedDrawio.includes('node_3["DB"]') &&
+    convertedDrawio.includes('Query')
+  ) {
+    console.log('✅ [Draw.io Converter] parseDrawioToMermaid() parses mxGraph XML cells into Mermaid flowchart.');
+    passed++;
+  } else {
+    console.error('❌ [Draw.io Converter] failed:', convertedDrawio);
+    failed++;
+  }
+
+  // 10. OpenAPI JSON Specification Test
+  const { parseOpenApiToMermaid } = await import('./src/utils/importers/openapi.js');
+  const openapiSample = JSON.stringify({
+    info: { title: "Store API" },
+    paths: {
+      "/items": {
+        get: { summary: "Fetch Items", responses: { "200": { description: "OK" } } }
+      }
+    }
+  });
+  const convertedOpenapi = parseOpenApiToMermaid(openapiSample);
+  if (
+    convertedOpenapi.startsWith('sequenceDiagram') &&
+    convertedOpenapi.includes('GET /items') &&
+    convertedOpenapi.includes('Fetch Items')
+  ) {
+    console.log('✅ [OpenAPI Converter] parseOpenApiToMermaid() converts REST endpoints to sequence flow.');
+    passed++;
+  } else {
+    console.error('❌ [OpenAPI Converter] failed:', convertedOpenapi);
     failed++;
   }
 

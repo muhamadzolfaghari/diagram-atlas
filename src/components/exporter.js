@@ -402,7 +402,7 @@ export class Exporter {
     const safeTitle = (title || 'Mermaid Diagram').replace(/[()\\]/g, '');
     const dateStr = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
     addString(
-      `6 0 obj\n<< /Title (${safeTitle}) /Creator (Mermaid Studio) /Producer (Mermaid Studio PDF Engine) /CreationDate (D:${dateStr}Z) >>\nendobj\n`
+      `6 0 obj\n<< /Title (${safeTitle}) /Creator (NodeFlow) /Producer (NodeFlow PDF Engine) /CreationDate (D:${dateStr}Z) >>\nendobj\n`
     );
 
     // 8. Cross-Reference Table
@@ -447,7 +447,7 @@ export class Exporter {
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${escapeHtml(safeTitle)} — Interactive Mermaid Studio View</title>
+  <title>${escapeHtml(safeTitle)} — Interactive NodeFlow View</title>
   <style>
     :root {
       --bg: #080c14;
@@ -489,7 +489,7 @@ export class Exporter {
   <header id="header">
     <div class="title-row">
       <span>${escapeHtml(safeTitle)}</span>
-      <span class="badge">Mermaid Studio Standalone</span>
+      <span class="badge">NodeFlow Standalone</span>
     </div>
     <div class="nav-actions">
       <button id="toggleThemeBtn" type="button">🌓 Theme</button>

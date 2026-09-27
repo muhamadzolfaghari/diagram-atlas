@@ -151,7 +151,7 @@ flowchart TD
     code: `sequenceDiagram
     autonumber
     actor User as User Browser
-    participant App as SPA Client (Mermaid Studio)
+    participant App as SPA Client (NodeFlow)
     participant Auth as Authorization Server
     participant API as Secure Resource API
 
@@ -310,12 +310,12 @@ flowchart TD
   },
   {
     id: 'mindmap-diagram',
-    title: 'Mindmap — Mermaid Studio Architecture',
+    title: 'Mindmap — NodeFlow Architecture',
     category: 'Conceptual & Mindmaps',
     kind: 'mindmap',
     description: 'Mindmap of editor features, canvas mechanics, and export pipeline.',
     code: `mindmap
-  root((Mermaid Studio))
+  root((NodeFlow))
     Canvas Engine
       Kinetic Drag & Inertia
       Cursor-centered Zoom

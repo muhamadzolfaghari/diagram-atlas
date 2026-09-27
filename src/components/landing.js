@@ -33,7 +33,7 @@ flowchart LR
     code: `sequenceDiagram
     autonumber
     actor User as Client Browser
-    participant App as Mermaid Studio
+    participant App as NodeFlow
     participant Auth as Auth Server
     participant API as Secure API
 

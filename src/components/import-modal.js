@@ -5,18 +5,22 @@ import { parseD2ToMermaid } from '../utils/importers/d2.js';
 import { parseSqlDdlToMermaid } from '../utils/importers/sql-ddl.js';
 import { parseOutline } from '../utils/importers/markdown-outline.js';
 import { parseCsvToMermaid } from '../utils/importers/csv-table.js';
+import { parseDrawioToMermaid } from '../utils/importers/drawio.js';
+import { parseOpenApiToMermaid } from '../utils/importers/openapi.js';
 import JSZip from 'jszip';
 
 /**
- * Universal Importer & Multi-Format Converter Modal for Mermaid Studio
- * Provides 100% free, offline client-side support for:
- * - XMind (.xmind) read, import & export
- * - PlantUML sequence/class/state conversion
- * - Graphviz DOT (.dot / .gv) to Flowcharts
- * - D2 Lang (.d2) to Flowcharts
- * - SQL Schema (CREATE TABLE) to ER Diagrams
- * - Markdown Outlines / Notes to Mindmaps & Flowcharts
- * - CSV / Tables to Flowcharts & ER Diagrams
+ * NodeFlow — Universal Importer & Multi-Format Diagram Converter
+ * 100% Free, Offline, and Client-Side:
+ * - 🧠 XMind (.xmind) read, import & export
+ * - 📦 Draw.io (.drawio / XML) to Flowchart
+ * - 📐 PlantUML sequence/class/state conversion
+ * - 🌐 Graphviz DOT (.dot / .gv) to Flowcharts
+ * - ⚡ D2 Lang (.d2) to Flowcharts
+ * - 🗄️ SQL Schema (DDL) to ER Diagrams
+ * - 🔌 OpenAPI / Swagger (JSON) to Sequence Diagrams
+ * - 📝 Markdown Outlines / Notes to Mindmaps & Flowcharts
+ * - 📊 CSV / Tables to Flowcharts & ER Diagrams
  */
 
 let activeTab = 'xmind';
@@ -60,15 +64,15 @@ function createModalElement() {
   overlay.style.display = 'none';
 
   overlay.innerHTML = `
-    <div class="modal-card import-modal-card" style="max-width: 900px; width: 94%; max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="modal-card import-modal-card" style="max-width: 920px; width: 95%; max-height: 90vh; display: flex; flex-direction: column;">
       <!-- Header -->
       <div class="modal-header">
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 22px;">📥</span>
           <div>
-            <h2 class="modal-title" style="margin: 0; font-size: 18px;">Universal Importer &amp; Diagram Converter</h2>
+            <h2 class="modal-title" style="margin: 0; font-size: 18px;">NodeFlow — Universal Diagram Converter</h2>
             <p class="modal-subtitle" style="margin: 2px 0 0; font-size: 12px; color: var(--text-muted);">
-              Replace expensive diagram subscriptions. Free, offline &amp; client-side.
+              Replace expensive tools (XMind, Lucidchart, Draw.io Pro, D2, dbdiagram). 100% free &amp; private.
             </p>
           </div>
         </div>
@@ -80,23 +84,29 @@ function createModalElement() {
         <button class="import-tab-btn active" data-tab="xmind" type="button">
           <span>🧠 XMind</span>
         </button>
+        <button class="import-tab-btn" data-tab="drawio" type="button">
+          <span>📦 Draw.io</span>
+        </button>
         <button class="import-tab-btn" data-tab="plantuml" type="button">
           <span>📐 PlantUML</span>
         </button>
         <button class="import-tab-btn" data-tab="graphviz" type="button">
-          <span>🌐 Graphviz DOT</span>
+          <span>🌐 Graphviz</span>
         </button>
         <button class="import-tab-btn" data-tab="d2" type="button">
           <span>⚡ D2 Lang</span>
         </button>
         <button class="import-tab-btn" data-tab="sql" type="button">
-          <span>🗄️ SQL Schema</span>
+          <span>🗄️ SQL DDL</span>
+        </button>
+        <button class="import-tab-btn" data-tab="openapi" type="button">
+          <span>🔌 OpenAPI</span>
         </button>
         <button class="import-tab-btn" data-tab="outline" type="button">
           <span>📝 Outline</span>
         </button>
         <button class="import-tab-btn" data-tab="csv" type="button">
-          <span>📊 CSV Table</span>
+          <span>📊 CSV</span>
         </button>
       </div>
 
@@ -104,20 +114,20 @@ function createModalElement() {
       <div class="import-modal-body" style="flex: 1; overflow-y: auto; padding: 18px 20px;">
         <!-- TAB 1: XMIND -->
         <div id="tabContentXmind" class="tab-pane active">
-          <div class="xmind-dropzone" id="xmindDropzone" style="border: 2px dashed var(--line); border-radius: 12px; padding: 30px 20px; text-align: center; background: rgba(99, 102, 241, 0.04); cursor: pointer; transition: all .2s ease;">
+          <div class="xmind-dropzone" id="xmindDropzone" style="border: 2px dashed var(--line); border-radius: 12px; padding: 28px 20px; text-align: center; background: rgba(99, 102, 241, 0.04); cursor: pointer; transition: all .2s ease;">
             <div style="font-size: 38px; margin-bottom: 8px;">🧠</div>
             <h3 style="margin: 0 0 6px; font-size: 16px;">Drop your .xmind file here</h3>
             <p style="margin: 0 0 16px; font-size: 13px; color: var(--text-muted); max-width: 600px; margin-left: auto; margin-right: auto;">
-              Supports modern XMind (.xmind / ZEN JSON) and legacy XMind 8 XML. Automatically converts topics into interactive Mermaid Mindmaps.
+              Supports modern XMind (.xmind / ZEN JSON) and legacy XMind 8 XML. Converts topics into NodeFlow mindmaps.
             </p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <button id="browseXmindBtn" class="btn btn-primary" type="button">
                 <span>📁 Select .xmind File</span>
               </button>
               <button id="demoXmindBtn" class="btn btn-secondary" type="button">
-                <span>⚡ Load Sample Architecture</span>
+                <span>⚡ Load Architecture Demo</span>
               </button>
-              <button id="exportCurrentToXmindBtn" class="btn btn-secondary" type="button" title="Save your current Mermaid Mindmap as an actual .xmind file">
+              <button id="exportCurrentToXmindBtn" class="btn btn-secondary" type="button" title="Save your current mindmap as an actual .xmind file">
                 <span>💾 Export to .xmind</span>
               </button>
             </div>
@@ -125,7 +135,28 @@ function createModalElement() {
           </div>
         </div>
 
-        <!-- TAB 2: PLANTUML -->
+        <!-- TAB 2: DRAW.IO -->
+        <div id="tabContentDrawio" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste Draw.io / diagrams.net XML content:
+          </label>
+          <textarea id="drawioInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">&lt;mxGraphModel&gt;
+  &lt;root&gt;
+    &lt;mxCell id="0"/&gt;
+    &lt;mxCell id="1" parent="0"/&gt;
+    &lt;mxCell id="2" value="Web Application" vertex="1" parent="1"/&gt;
+    &lt;mxCell id="3" value="Authentication Service" vertex="1" parent="1"/&gt;
+    &lt;mxCell id="4" value="Verify Session" edge="1" source="2" target="3" parent="1"/&gt;
+  &lt;/root&gt;
+&lt;/mxGraphModel&gt;</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertDrawioBtn" class="btn btn-primary" type="button">
+              <span>Convert Draw.io to NodeFlow ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 3: PLANTUML -->
         <div id="tabContentPlantuml" class="tab-pane" style="display: none;">
           <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
             Paste PlantUML Sequence, Class, or State Code:
@@ -146,12 +177,12 @@ Gateway --> Client: Bearer Token Response
 @enduml</textarea>
           <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
             <button id="convertPlantumlBtn" class="btn btn-primary" type="button">
-              <span>Convert to Mermaid ↵</span>
+              <span>Convert PlantUML ↵</span>
             </button>
           </div>
         </div>
 
-        <!-- TAB 3: GRAPHVIZ DOT -->
+        <!-- TAB 4: GRAPHVIZ DOT -->
         <div id="tabContentGraphviz" class="tab-pane" style="display: none;">
           <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
             Paste Graphviz DOT (.dot / .gv) Directed Graph:
@@ -169,12 +200,12 @@ Gateway --> Client: Bearer Token Response
 }</textarea>
           <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
             <button id="convertGraphvizBtn" class="btn btn-primary" type="button">
-              <span>Convert DOT to Mermaid ↵</span>
+              <span>Convert DOT ↵</span>
             </button>
           </div>
         </div>
 
-        <!-- TAB 4: D2 LANG -->
+        <!-- TAB 5: D2 LANG -->
         <div id="tabContentD2" class="tab-pane" style="display: none;">
           <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
             Paste D2 Declarative Diagram Code:
@@ -192,12 +223,12 @@ app -> db: Read Record
 app -> client: JSON Payload</textarea>
           <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
             <button id="convertD2Btn" class="btn btn-primary" type="button">
-              <span>Convert D2 to Mermaid ↵</span>
+              <span>Convert D2 ↵</span>
             </button>
           </div>
         </div>
 
-        <!-- TAB 5: SQL SCHEMA -->
+        <!-- TAB 6: SQL SCHEMA -->
         <div id="tabContentSql" class="tab-pane" style="display: none;">
           <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
             Paste SQL DDL (CREATE TABLE Statements):
@@ -229,7 +260,31 @@ CREATE TABLE order_items (
           </div>
         </div>
 
-        <!-- TAB 6: OUTLINE -->
+        <!-- TAB 7: OPENAPI / SWAGGER -->
+        <div id="tabContentOpenapi" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste OpenAPI / Swagger JSON Specification:
+          </label>
+          <textarea id="openapiInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">{
+  "info": { "title": "Store API" },
+  "paths": {
+    "/products": {
+      "get": { "summary": "List Products", "responses": { "200": { "description": "Success" } } },
+      "post": { "summary": "Create Product", "responses": { "201": { "description": "Created" } } }
+    },
+    "/checkout": {
+      "post": { "summary": "Process Order", "responses": { "200": { "description": "Order Placed" } } }
+    }
+  }
+}</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertOpenapiBtn" class="btn btn-primary" type="button">
+              <span>Generate Sequence Diagram ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 8: OUTLINE -->
         <div id="tabContentOutline" class="tab-pane" style="display: none;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
             <label style="font-size: 12px; font-weight: 600; color: var(--text-muted);">
@@ -238,8 +293,8 @@ CREATE TABLE order_items (
             <div style="display: flex; align-items: center; gap: 8px;">
               <span style="font-size: 12px; color: var(--text-muted);">Target:</span>
               <select id="outlineTargetSelect" class="theme-dropdown-select" style="padding: 4px 8px; font-size: 12px;">
-                <option value="mindmap">Mermaid Mindmap</option>
-                <option value="flowchart">Mermaid Flowchart</option>
+                <option value="mindmap">Mindmap</option>
+                <option value="flowchart">Flowchart</option>
               </select>
             </div>
           </div>
@@ -260,7 +315,7 @@ CREATE TABLE order_items (
           </div>
         </div>
 
-        <!-- TAB 7: CSV / TABLE -->
+        <!-- TAB 9: CSV / TABLE -->
         <div id="tabContentCsv" class="tab-pane" style="display: none;">
           <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
             Paste Tabular CSV (Flowchart From/To or ER Diagram columns):
@@ -272,7 +327,7 @@ User Browser,Local WebGPU LLM,Run Qwen2.5 Model
 User Browser,GitHub Pages,Deploy Artifacts</textarea>
           <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
             <button id="convertCsvBtn" class="btn btn-primary" type="button">
-              <span>Convert CSV to Mermaid ↵</span>
+              <span>Convert CSV to Flowchart ↵</span>
             </button>
           </div>
         </div>
@@ -281,7 +336,7 @@ User Browser,GitHub Pages,Deploy Artifacts</textarea>
         <div id="conversionResultWrap" style="margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <span style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em;">
-              Generated Mermaid Syntax Preview
+              Generated Diagram Syntax Preview
             </span>
             <span id="convertStatusBadge" class="badge" style="background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid rgba(74, 222, 128, 0.3); font-size: 11px; padding: 2px 8px; border-radius: 999px;">
               Ready
@@ -369,90 +424,112 @@ function attachEventListeners(modalEl) {
   exportXmindBtn.addEventListener('click', async () => {
     const currentCode = getCurrentCodeCallback ? getCurrentCodeCallback() : '';
     if (!currentCode || !currentCode.trim().startsWith('mindmap')) {
-      alert('To export as XMind (.xmind), current diagram in editor must be a Mermaid mindmap.');
+      alert('To export as XMind (.xmind), current diagram in editor must be a mindmap.');
       return;
     }
 
     try {
       setStatus('Generating .xmind archive...', 'info');
-      const blob = await exportMermaidToXmindBlob(currentCode, 'Mermaid Studio Map');
+      const blob = await exportMermaidToXmindBlob(currentCode, 'NodeFlow Diagram');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'mermaid-mindmap.xmind';
+      a.download = 'nodeflow-diagram.xmind';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setStatus('Downloaded mermaid-mindmap.xmind! ✅', 'success');
+      setStatus('Downloaded nodeflow-diagram.xmind! ✅', 'success');
     } catch (err) {
       alert(`Export failed: ${err.message}`);
       setStatus(`Export failed: ${err.message}`, 'error');
     }
   });
 
-  // 2. PlantUML
+  // 2. Draw.io
+  modalEl.querySelector('#convertDrawioBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#drawioInput').value;
+    try {
+      const code = parseDrawioToMermaid(input);
+      setResult(code, 'Converted from Draw.io successfully! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 3. PlantUML
   modalEl.querySelector('#convertPlantumlBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#plantumlInput').value;
     try {
-      const mermaidCode = parsePlantUmlToMermaid(input);
-      setResult(mermaidCode, 'Converted from PlantUML successfully! ✅');
+      const code = parsePlantUmlToMermaid(input);
+      setResult(code, 'Converted from PlantUML successfully! ✅');
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
   });
 
-  // 3. Graphviz DOT
+  // 4. Graphviz DOT
   modalEl.querySelector('#convertGraphvizBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#graphvizInput').value;
     try {
-      const mermaidCode = parseDotToMermaid(input);
-      setResult(mermaidCode, 'Converted Graphviz DOT to Mermaid! ✅');
+      const code = parseDotToMermaid(input);
+      setResult(code, 'Converted Graphviz DOT to Flowchart! ✅');
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
   });
 
-  // 4. D2 Lang
+  // 5. D2 Lang
   modalEl.querySelector('#convertD2Btn').addEventListener('click', () => {
     const input = modalEl.querySelector('#d2Input').value;
     try {
-      const mermaidCode = parseD2ToMermaid(input);
-      setResult(mermaidCode, 'Converted D2 to Mermaid! ✅');
+      const code = parseD2ToMermaid(input);
+      setResult(code, 'Converted D2 to Flowchart! ✅');
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
   });
 
-  // 5. SQL Schema (DDL)
+  // 6. SQL Schema (DDL)
   modalEl.querySelector('#convertSqlBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#sqlInput').value;
     try {
-      const mermaidCode = parseSqlDdlToMermaid(input);
-      setResult(mermaidCode, 'Generated ER Diagram from SQL DDL! ✅');
+      const code = parseSqlDdlToMermaid(input);
+      setResult(code, 'Generated ER Diagram from SQL DDL! ✅');
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
   });
 
-  // 6. Outline
+  // 7. OpenAPI / Swagger
+  modalEl.querySelector('#convertOpenapiBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#openapiInput').value;
+    try {
+      const code = parseOpenApiToMermaid(input);
+      setResult(code, 'Generated Sequence Diagram from OpenAPI! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 8. Outline
   modalEl.querySelector('#convertOutlineBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#outlineInput').value;
     const target = modalEl.querySelector('#outlineTargetSelect').value;
     try {
-      const mermaidCode = parseOutline(input, target);
-      setResult(mermaidCode, `Converted outline to ${target}! ✅`);
+      const code = parseOutline(input, target);
+      setResult(code, `Converted outline to ${target}! ✅`);
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
   });
 
-  // 7. CSV
+  // 9. CSV
   modalEl.querySelector('#convertCsvBtn').addEventListener('click', () => {
     const input = modalEl.querySelector('#csvInput').value;
     try {
-      const mermaidCode = parseCsvToMermaid(input);
-      setResult(mermaidCode, 'Converted CSV to Mermaid diagram! ✅');
+      const code = parseCsvToMermaid(input);
+      setResult(code, 'Converted CSV to Flowchart! ✅');
     } catch (err) {
       setStatus(`Error: ${err.message}`, 'error');
     }
@@ -545,5 +622,7 @@ function setStatus(msg, type = 'info') {
 function capitalize(str) {
   if (str === 'd2') return 'D2';
   if (str === 'sql') return 'Sql';
+  if (str === 'drawio') return 'Drawio';
+  if (str === 'openapi') return 'Openapi';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
