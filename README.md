@@ -23,6 +23,11 @@ Many industry diagram tools lock essential export capabilities, format conversio
 | **`.json` (OpenAPI/Swagger)**| **SwaggerHub / Postman Pro** | **$168 – $360 / yr** | Visual interactive sequences, API architecture diagrams, endpoint mockups | **✓ 100% Free**: Automatic OpenAPI REST JSON endpoint parser to interactive sequence flows. |
 | **`.dot` / `.gv`** | **Graphviz Commercial Tools** | **$49 – $99 / yr** | Modern interactive UI, CAD pan/zoom canvas, responsive web embedding | **✓ 100% Free**: Graphviz DOT digraph to Mermaid flowchart converter with CAD canvas navigation. |
 | **Markdown / Outlines** | **Whimsical / Miro Pro** | **$96 – $120 / yr** | Board caps, AI diagramming credits, high-resolution vector exports | **✓ 100% Free**: Indented outline to Mindmap/Flowchart converter + Dual WebGPU local AI generator. |
+| **`.graphql` (GraphQL SDL)**| **Apollo Studio / Inigo** | **$499 – $1,188 / yr** | Schema entity relationship visualizer, type hierarchy, team permission paywalls | **✓ 100% Free**: Direct GraphQL SDL parser to Mermaid `classDiagram` with entity relations. |
+| **`.bpmn` (BPMN 2.0 XML)** | **Camunda / Signavio** | **$588 – $1,200+ / yr** | Workflow modeler, decision table exports, enterprise BPMN paywalls | **✓ 100% Free**: Full BPMN 2.0 XML parser mapping tasks, gateways, and flows to Mermaid. |
+| **`.dsl` / `.c4` (C4 DSL)** | **Structurizr Cloud** | **$180 – $360 / yr** | Software architecture modeling, container views, cloud team seats | **✓ 100% Free**: Structurizr & C4-PlantUML DSL parser to native Mermaid `C4Context`. |
+| **`.tf` (Terraform HCL)** | **Brainboard / Cloudcraft** | **$588 – $1,188 / yr** | Cloud infrastructure diagramming, dependency topology, export lock-in | **✓ 100% Free**: Terraform HCL resource & dependency parser to cloud architecture flowcharts. |
+| **`.json` (AsyncAPI)** | **Postman Event / Solace** | **$240 – $480 / yr** | Kafka & RabbitMQ event sequence tracking, channel choreography | **✓ 100% Free**: AsyncAPI channel & event payload parser to Mermaid sequence flows. |
 
 ---
 
@@ -31,13 +36,18 @@ Many industry diagram tools lock essential export capabilities, format conversio
 - **Universal Multi-Format Importer (100% Free & Offline)**:
   - **XMind (.xmind) Bi-Directional**: Reads and generates native `.xmind` files in-browser. Converts XMind ZEN and legacy XMind 8 into Mermaid Mindmaps, and exports mindmaps back to native `.xmind` workbooks.
   - **Draw.io (.drawio / XML)**: Converts `mxGraphModel` XML cells, vertices, and edges into Mermaid flowcharts.
+  - **GraphQL Schema (SDL)**: Converts `.graphql` / `.gql` types, fields, and interfaces to Mermaid `classDiagram`.
+  - **BPMN 2.0 XML**: Converts enterprise `.bpmn` Camunda/Signavio workflow definitions to Mermaid flowcharts.
+  - **C4 Model & Structurizr DSL**: Converts `.dsl` and `.c4` architecture specifications to native Mermaid `C4Context`.
+  - **Terraform HCL (.tf)**: Parses cloud resources and dependencies into visual architecture flowcharts.
+  - **AsyncAPI Spec**: Converts Kafka/RabbitMQ channels and event payloads to Mermaid sequence diagrams.
   - **PlantUML (.puml)**: Converts `@startuml` sequence, class, and state diagrams into Mermaid syntax in 1 click.
   - **D2 Lang (.d2)**: Translates declarative D2 architecture code into clean Mermaid flowcharts.
   - **SQL DDL to ER Diagram**: Parses SQL `CREATE TABLE` statements and foreign keys into Mermaid `erDiagram`.
   - **OpenAPI / Swagger JSON**: Generates clean architectural sequence diagrams from REST API endpoints.
   - **Markdown Outlines & OPML**: Transforms indented bullet lists into hierarchical Mindmaps or Flowcharts.
   - **CSV / Tabular Data**: Converts CSV data rows into Flowchart relationship graphs or ER schemas.
-  - **Drag-and-Drop Everywhere**: Drop `.xmind`, `.drawio`, `.puml`, `.d2`, `.sql`, or `.mmd` files directly onto the editor or canvas.
+  - **Drag-and-Drop Everywhere**: Drop `.xmind`, `.drawio`, `.puml`, `.d2`, `.sql`, `.graphql`, `.bpmn`, `.tf`, or `.mmd` files directly onto the editor or canvas.
 - **Dual In-Browser AI Diagram Assistant**:
   - **Instant Heuristic Engine**: 0 MB download, runs instantly anywhere with natural language prompts.
   - **Local Qwen2.5-Coder (0.5B) LLM**: 100% private, executes in your browser via WebGPU and WebAssembly. No API keys or paid subscriptions required!

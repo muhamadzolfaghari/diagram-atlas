@@ -473,6 +473,122 @@ try {
     failed++;
   }
 
+  // 11. GraphQL SDL Test
+  const { parseGraphQLToMermaid } = await import('./src/utils/importers/graphql.js');
+  const gqlSample = `type User {
+    id: ID!
+    email: String!
+    posts: [Post]
+  }
+  type Post {
+    id: ID!
+    title: String!
+  }`;
+  const convertedGql = parseGraphQLToMermaid(gqlSample);
+  if (
+    convertedGql.startsWith('classDiagram') &&
+    convertedGql.includes('class User {') &&
+    convertedGql.includes('+ID id') &&
+    convertedGql.includes('User --> "0..*" Post : posts')
+  ) {
+    console.log('✅ [GraphQL Converter] parseGraphQLToMermaid() generates classDiagram with fields and relationships.');
+    passed++;
+  } else {
+    console.error('❌ [GraphQL Converter] failed:', convertedGql);
+    failed++;
+  }
+
+  // 12. BPMN 2.0 XML Test
+  const { parseBpmnToMermaid } = await import('./src/utils/importers/bpmn.js');
+  const bpmnSample = `<?xml version="1.0" encoding="UTF-8"?>
+  <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL">
+    <bpmn:process id="OrderProcess">
+      <bpmn:startEvent id="Start_1" name="Order Placed" />
+      <bpmn:serviceTask id="Task_1" name="Process Payment" />
+      <bpmn:endEvent id="End_1" name="Order Fulfilled" />
+      <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_1" />
+      <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="End_1" />
+    </bpmn:process>
+  </bpmn:definitions>`;
+  const convertedBpmn = parseBpmnToMermaid(bpmnSample);
+  if (
+    convertedBpmn.startsWith('flowchart TD') &&
+    convertedBpmn.includes('Start_1') &&
+    convertedBpmn.includes('Process Payment') &&
+    convertedBpmn.includes('Start_1 --> Task_1')
+  ) {
+    console.log('✅ [BPMN 2.0 Converter] parseBpmnToMermaid() maps BPMN events and sequenceFlows to flowchart.');
+    passed++;
+  } else {
+    console.error('❌ [BPMN 2.0 Converter] failed:', convertedBpmn);
+    failed++;
+  }
+
+  // 13. Structurizr & C4 DSL Test
+  const { parseC4DslToMermaid } = await import('./src/utils/importers/c4-dsl.js');
+  const c4Sample = `Person(customer, "Bank Customer", "Enjoys online banking")
+  System(bankingSystem, "Internet Banking", "Allows account access")
+  Rel(customer, bankingSystem, "Uses", "HTTPS")`;
+  const convertedC4 = parseC4DslToMermaid(c4Sample);
+  if (
+    convertedC4.startsWith('C4Context') &&
+    convertedC4.includes('Person(customer') &&
+    convertedC4.includes('System(bankingSystem') &&
+    convertedC4.includes('Rel(customer, bankingSystem')
+  ) {
+    console.log('✅ [C4 DSL Converter] parseC4DslToMermaid() outputs valid C4Context with persons, systems, and rels.');
+    passed++;
+  } else {
+    console.error('❌ [C4 DSL Converter] failed:', convertedC4);
+    failed++;
+  }
+
+  // 14. Terraform HCL Test
+  const { parseTerraformToMermaid } = await import('./src/utils/importers/terraform.js');
+  const tfSample = `resource "aws_vpc" "main_vpc" {
+    cidr_block = "10.0.0.0/16"
+  }
+  resource "aws_subnet" "public_subnet" {
+    vpc_id = aws_vpc.main_vpc.id
+  }`;
+  const convertedTf = parseTerraformToMermaid(tfSample);
+  if (
+    convertedTf.startsWith('flowchart LR') &&
+    convertedTf.includes('main_vpc') &&
+    convertedTf.includes('public_subnet') &&
+    convertedTf.includes('aws_subnet_public_subnet -.->|depends_on| aws_vpc_main_vpc')
+  ) {
+    console.log('✅ [Terraform Converter] parseTerraformToMermaid() extracts resources and dependencies.');
+    passed++;
+  } else {
+    console.error('❌ [Terraform Converter] failed:', convertedTf);
+    failed++;
+  }
+
+  // 15. AsyncAPI Specification Test
+  const { parseAsyncApiToMermaid } = await import('./src/utils/importers/asyncapi.js');
+  const asyncApiSample = JSON.stringify({
+    asyncapi: "2.6.0",
+    info: { title: "Order Broker" },
+    channels: {
+      "orders/created": {
+        publish: { message: { name: "OrderCreatedEvent" } }
+      }
+    }
+  });
+  const convertedAsync = parseAsyncApiToMermaid(asyncApiSample);
+  if (
+    convertedAsync.startsWith('sequenceDiagram') &&
+    convertedAsync.includes('Publish to [orders/created]') &&
+    convertedAsync.includes('OrderCreatedEvent')
+  ) {
+    console.log('✅ [AsyncAPI Converter] parseAsyncApiToMermaid() maps channels and events to sequence diagram.');
+    passed++;
+  } else {
+    console.error('❌ [AsyncAPI Converter] failed:', convertedAsync);
+    failed++;
+  }
+
 } catch (err) {
   console.error('❌ [Universal Importers] Test Group 7 failed:', err);
   failed++;

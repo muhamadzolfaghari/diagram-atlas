@@ -7,6 +7,11 @@ import { parseOutline } from '../utils/importers/markdown-outline.js';
 import { parseCsvToMermaid } from '../utils/importers/csv-table.js';
 import { parseDrawioToMermaid } from '../utils/importers/drawio.js';
 import { parseOpenApiToMermaid } from '../utils/importers/openapi.js';
+import { parseGraphQLToMermaid } from '../utils/importers/graphql.js';
+import { parseBpmnToMermaid } from '../utils/importers/bpmn.js';
+import { parseC4DslToMermaid } from '../utils/importers/c4-dsl.js';
+import { parseTerraformToMermaid } from '../utils/importers/terraform.js';
+import { parseAsyncApiToMermaid } from '../utils/importers/asyncapi.js';
 import JSZip from 'jszip';
 
 /**
@@ -107,6 +112,21 @@ function createModalElement() {
         </button>
         <button class="import-tab-btn" data-tab="csv" type="button">
           <span>📊 CSV</span>
+        </button>
+        <button class="import-tab-btn" data-tab="graphql" type="button">
+          <span>⚡ GraphQL</span>
+        </button>
+        <button class="import-tab-btn" data-tab="bpmn" type="button">
+          <span>📋 BPMN 2.0</span>
+        </button>
+        <button class="import-tab-btn" data-tab="c4" type="button">
+          <span>🏛️ C4 DSL</span>
+        </button>
+        <button class="import-tab-btn" data-tab="terraform" type="button">
+          <span>☁️ Terraform</span>
+        </button>
+        <button class="import-tab-btn" data-tab="asyncapi" type="button">
+          <span>📨 AsyncAPI</span>
         </button>
       </div>
 
@@ -332,6 +352,134 @@ User Browser,GitHub Pages,Deploy Artifacts</textarea>
           </div>
         </div>
 
+        <!-- TAB 10: GRAPHQL -->
+        <div id="tabContentGraphql" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste GraphQL Schema (SDL):
+          </label>
+          <textarea id="graphqlInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">type User {
+  id: ID!
+  name: String!
+  email: String!
+  posts: [Post]
+}
+
+type Post {
+  id: ID!
+  title: String!
+  content: String
+  author: User!
+  comments: [Comment]
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  user: User!
+}</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertGraphqlBtn" class="btn btn-primary" type="button">
+              <span>Convert GraphQL to Class Diagram ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 11: BPMN 2.0 -->
+        <div id="tabContentBpmn" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste BPMN 2.0 XML (Camunda / Signavio):
+          </label>
+          <textarea id="bpmnInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"&gt;
+  &lt;bpmn:process id="PaymentProcess"&gt;
+    &lt;bpmn:startEvent id="Start_1" name="Order Received" /&gt;
+    &lt;bpmn:userTask id="Task_Review" name="Review Order" /&gt;
+    &lt;bpmn:exclusiveGateway id="Gate_Approval" name="Approved?" /&gt;
+    &lt;bpmn:serviceTask id="Task_Pay" name="Execute Stripe Charge" /&gt;
+    &lt;bpmn:endEvent id="End_1" name="Order Dispatched" /&gt;
+    &lt;bpmn:sequenceFlow id="Flow_1" sourceRef="Start_1" targetRef="Task_Review" /&gt;
+    &lt;bpmn:sequenceFlow id="Flow_2" sourceRef="Task_Review" targetRef="Gate_Approval" /&gt;
+    &lt;bpmn:sequenceFlow id="Flow_3" sourceRef="Gate_Approval" targetRef="Task_Pay" name="Yes" /&gt;
+    &lt;bpmn:sequenceFlow id="Flow_4" sourceRef="Task_Pay" targetRef="End_1" /&gt;
+  &lt;/bpmn:process&gt;
+&lt;/bpmn:definitions&gt;</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertBpmnBtn" class="btn btn-primary" type="button">
+              <span>Convert BPMN 2.0 to Flowchart ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 12: C4 DSL -->
+        <div id="tabContentC4" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste Structurizr DSL or C4-PlantUML:
+          </label>
+          <textarea id="c4Input" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">Person(user, "Bank Customer", "Enjoys modern mobile banking")
+System(bankingApp, "Mobile Banking System", "Allows checking balances and transfers")
+System_Ext(coreBanking, "Mainframe Core", "Stores actual accounts and ledger")
+
+Rel(user, bankingApp, "Uses", "HTTPS / JSON")
+Rel(bankingApp, coreBanking, "Queries balance", "gRPC / TLS")</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertC4Btn" class="btn btn-primary" type="button">
+              <span>Convert to C4 Diagram ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 13: TERRAFORM -->
+        <div id="tabContentTerraform" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste Terraform HCL (.tf):
+          </label>
+          <textarea id="terraformInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">resource "aws_vpc" "main_vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "public_subnet" {
+  vpc_id     = aws_vpc.main_vpc.id
+  cidr_block = "10.0.1.0/24"
+}
+
+resource "aws_instance" "api_server" {
+  subnet_id = aws_subnet.public_subnet.id
+}
+
+resource "aws_db_instance" "postgres_primary" {
+  vpc_id = aws_vpc.main_vpc.id
+}</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertTerraformBtn" class="btn btn-primary" type="button">
+              <span>Convert Terraform to Architecture ↵</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 14: ASYNCAPI -->
+        <div id="tabContentAsyncapi" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste AsyncAPI JSON Specification:
+          </label>
+          <textarea id="asyncapiInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">{
+  "asyncapi": "2.6.0",
+  "info": { "title": "Payment Event Stream" },
+  "channels": {
+    "payments/checkout": {
+      "publish": { "message": { "name": "PaymentInitiatedEvent" } }
+    },
+    "notifications/receipt": {
+      "subscribe": { "message": { "name": "SendReceiptCommand" } }
+    }
+  }
+}</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertAsyncapiBtn" class="btn btn-primary" type="button">
+              <span>Convert AsyncAPI to Sequence ↵</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Conversion Output Section -->
         <div id="conversionResultWrap" style="margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -535,6 +683,61 @@ function attachEventListeners(modalEl) {
     }
   });
 
+  // 10. GraphQL
+  modalEl.querySelector('#convertGraphqlBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#graphqlInput').value;
+    try {
+      const code = parseGraphQLToMermaid(input);
+      setResult(code, 'Generated Class Diagram from GraphQL! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 11. BPMN 2.0
+  modalEl.querySelector('#convertBpmnBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#bpmnInput').value;
+    try {
+      const code = parseBpmnToMermaid(input);
+      setResult(code, 'Converted BPMN 2.0 to Flowchart! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 12. C4 DSL
+  modalEl.querySelector('#convertC4Btn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#c4Input').value;
+    try {
+      const code = parseC4DslToMermaid(input);
+      setResult(code, 'Converted C4 DSL to C4Context! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 13. Terraform
+  modalEl.querySelector('#convertTerraformBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#terraformInput').value;
+    try {
+      const code = parseTerraformToMermaid(input);
+      setResult(code, 'Converted Terraform to Architecture! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
+  // 14. AsyncAPI
+  modalEl.querySelector('#convertAsyncapiBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#asyncapiInput').value;
+    try {
+      const code = parseAsyncApiToMermaid(input);
+      setResult(code, 'Converted AsyncAPI to Sequence! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
   // Copy Result
   modalEl.querySelector('#copyConvertedBtn').addEventListener('click', async () => {
     if (!lastConvertedCode) return;
@@ -624,5 +827,10 @@ function capitalize(str) {
   if (str === 'sql') return 'Sql';
   if (str === 'drawio') return 'Drawio';
   if (str === 'openapi') return 'Openapi';
+  if (str === 'graphql') return 'Graphql';
+  if (str === 'bpmn') return 'Bpmn';
+  if (str === 'c4') return 'C4';
+  if (str === 'terraform') return 'Terraform';
+  if (str === 'asyncapi') return 'Asyncapi';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
