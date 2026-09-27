@@ -10,41 +10,52 @@ A free, responsive, browser-based [Mermaid](https://mermaid.js.org/) diagram edi
 
 ## 🌟 Key Features
 
+- **High-Converting SEO Landing Page**:
+  - Live interactive diagram playground right on the homepage.
+  - Comprehensive feature deep-dives and developer workflow guides.
+  - Interactive FAQ accordion indexed with Google JSON-LD schema for rich search snippets.
+  - Complete competitive comparison matrix against legacy and cloud diagramming tools.
+- **Dual In-Browser AI Diagram Assistant**:
+  - **Instant Heuristic Engine**: 0 MB download, runs instantly anywhere with natural language prompts.
+  - **Local Qwen2.5-Coder (0.5B) LLM**: 100% private, executes in your browser via WebGPU and WebAssembly. No API keys or paid subscriptions required!
 - **CAD / Figma-Style Interactive Canvas**:
   - Smooth panning with velocity tracking and kinetic momentum release.
   - Cursor-centered wheel zooming and 2-finger trackpad panning / pinch-to-zoom.
   - 1-click **Fit to View** (`F`), **Recenter** (`C`), and **100% Reset** (`0`).
+  - Interactive live **Minimap navigation** and laser pointer for presentations.
   - Wheel mode toggle: switch mouse wheel between **Zoom** and **Pan**.
   - Immersive **Full Screen** mode (`Shift + F` or `F11`).
   - Radial dot grid, line grid, or clean blank canvas backgrounds.
+- **Pro Export Studio & Embeds**:
+  - **Clean Vector SVG**: Scalable vector graphics with accurate bounding boxes.
+  - **High-DPI PNG (2x & 4x Retina)**: Crisp, high-resolution rasterization.
+  - **Vector PDF Export**: Single-click PDF export with sharp typography and zero blur.
+  - **Standalone Interactive HTML**: Self-contained single-file HTML bundle with embedded pan/zoom controls.
+  - **Presentation Mode**: Distraction-free meeting mode with laser pointer (`L`).
+  - **Direct .mmd Import / Export**: Open local `.mmd` or `.txt` files via file picker or drag-and-drop.
 - **Resilient Live Code Editor**:
-  - Split-view editor with a draggable panel divider.
+  - Split-view editor with draggable splitter and responsive mobile tabs.
   - Monospaced editor with synchronized line numbers and 2-space tab indentation.
   - **Non-destructive syntax error handling**: When Mermaid code has an error, a floating banner details the error while **keeping the previous valid diagram on canvas** (no blank screens or flashing).
-  - Character and line counter status bar.
-- **Rich Diagram Starter Catalog**:
-  - **Dependency Tree (Overview)**: High-level milestone progression from infrastructure baseline to project completion (inspired by the tourism redesign delivery explorer).
-  - **Delivery Roadmap (Gantt)**: Resource delivery sequence and QA timeline.
-  - **Architecture Service Map**: Multi-service dependency tree across domestic flight, hotel, and transit verticals.
-  - **Sequence Diagram**: OAuth 2.0 PKCE authentication flow.
-  - **Class Diagram**: Object-oriented canvas and renderer engine hierarchy.
-  - **State Diagram**: Diagram lifecycle and error-recovery state machine.
-  - **Entity Relationship (ER) Diagram**: Workspace schema and revision tracking.
-  - **Git Graph**: Trunk-based release flow with feature branches and tags.
-  - **Mindmap**: Mermaid Studio architecture breakdown.
-  - One-click **Restore Template** to reset back to starter code at any time.
-- **Import, Export & Local Storage**:
-  - **Direct .mmd Import**: Open local `.mmd` or `.txt` files via file picker or drag-and-drop directly onto the editor.
-  - **SVG Export**: Clean XML SVG download with accurate bounding boxes.
-  - **PNG Export**: High-DPI rasterization (2x Retina scale) for crisp, professional diagrams.
-  - **Mermaid Source Download**: Download formatted `.mmd` files.
-  - **Copy to Clipboard**: Quick copy of SVG markup or fenced Markdown blocks (` ```mermaid `).
-  - **Browser Local Storage**: Automatic draft autosave and a **Saved Diagrams Library** to save, load, and manage named diagrams locally.
-- **Theme Selection**:
-  - Switch between Mermaid themes: `Dark`, `Default`, `Forest`, `Neutral`, and `Base`.
+  - Revision snapshots and version history (`v0.1`, `v0.2`, etc.).
 - **100% Free & Private**:
   - No account, login, backend server, or paid APIs required.
-  - All diagram parsing, rendering, and exports happen 100% client-side inside your browser.
+  - All diagram parsing, AI generation, and exports happen 100% client-side inside your browser.
+
+---
+
+## 📊 Competitive Comparison
+
+| Feature / Capability | 🧜‍♀️ **Mermaid Studio** | **Mermaid Live Editor** | **Mermaid Chart** | **Eraser.io** |
+| :--- | :--- | :--- | :--- | :--- |
+| **Pricing** | **100% Free / MIT** | Free / Open Source | $8 - $12 / mo | Freemium ($10/mo) |
+| **Account Required** | **None (Instant Access)** | None | Yes | Yes |
+| **Local In-Browser AI** | **✓ Dual (Instant + Qwen LLM)** | ✗ None | Cloud AI (Paid) | Cloud AI (Paid) |
+| **CAD Canvas Controls** | **✓ Kinetic Pan, Minimap, Pinch** | ✗ Basic CSS zoom | Limited | ✓ Good |
+| **Vector PDF Export** | **✓ Yes (Built-in)** | ✗ No | Paid Tier Only | Paid Tier Only |
+| **Interactive Standalone HTML** | **✓ Yes (Self-Contained)** | ✗ No | ✗ No | ✗ No |
+| **Presentation Mode + Laser** | **✓ Yes** | ✗ No | Limited | ✓ Good |
+| **Data Privacy** | **100% Client-Side / Offline** | Client-Side | Cloud Hosted | Cloud Hosted |
 
 ---
 
