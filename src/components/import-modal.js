@@ -12,6 +12,7 @@ import { parseBpmnToMermaid } from '../utils/importers/bpmn.js';
 import { parseC4DslToMermaid } from '../utils/importers/c4-dsl.js';
 import { parseTerraformToMermaid } from '../utils/importers/terraform.js';
 import { parseAsyncApiToMermaid } from '../utils/importers/asyncapi.js';
+import { parseFreeMindOrOpmlToMermaid } from '../utils/importers/freemind.js';
 import JSZip from 'jszip';
 
 /**
@@ -127,6 +128,9 @@ function createModalElement() {
         </button>
         <button class="import-tab-btn" data-tab="asyncapi" type="button">
           <span>📨 AsyncAPI</span>
+        </button>
+        <button class="import-tab-btn" data-tab="freemind" type="button">
+          <span>🗺️ FreeMind / OPML</span>
         </button>
       </div>
 
@@ -480,6 +484,30 @@ resource "aws_db_instance" "postgres_primary" {
           </div>
         </div>
 
+        <!-- TAB 15: FREEMIND & OPML -->
+        <div id="tabContentFreemind" class="tab-pane" style="display: none;">
+          <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">
+            Paste FreeMind (.mm) XML or OPML Outline:
+          </label>
+          <textarea id="freemindInput" spellcheck="false" style="width: 100%; height: 150px; font-family: monospace; font-size: 13px; padding: 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); resize: vertical;">&lt;map version="1.0.1"&gt;
+  &lt;node TEXT="Strategic Roadmap"&gt;
+    &lt;node TEXT="Q1 Foundation"&gt;
+      &lt;node TEXT="Universal Importer" /&gt;
+      &lt;node TEXT="CAD Canvas Controls" /&gt;
+    &lt;/node&gt;
+    &lt;node TEXT="Q2 Scale"&gt;
+      &lt;node TEXT="Local WebGPU AI" /&gt;
+      &lt;node TEXT="Vector PDF Print Studio" /&gt;
+    &lt;/node&gt;
+  &lt;/node&gt;
+&lt;/map&gt;</textarea>
+          <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+            <button id="convertFreemindBtn" class="btn btn-primary" type="button">
+              <span>Convert FreeMind / OPML to Mindmap ↵</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Conversion Output Section -->
         <div id="conversionResultWrap" style="margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
@@ -738,6 +766,17 @@ function attachEventListeners(modalEl) {
     }
   });
 
+  // 15. FreeMind & OPML
+  modalEl.querySelector('#convertFreemindBtn').addEventListener('click', () => {
+    const input = modalEl.querySelector('#freemindInput').value;
+    try {
+      const code = parseFreeMindOrOpmlToMermaid(input);
+      setResult(code, 'Converted FreeMind / OPML to Mindmap! ✅');
+    } catch (err) {
+      setStatus(`Error: ${err.message}`, 'error');
+    }
+  });
+
   // Copy Result
   modalEl.querySelector('#copyConvertedBtn').addEventListener('click', async () => {
     if (!lastConvertedCode) return;
@@ -832,5 +871,6 @@ function capitalize(str) {
   if (str === 'c4') return 'C4';
   if (str === 'terraform') return 'Terraform';
   if (str === 'asyncapi') return 'Asyncapi';
+  if (str === 'freemind') return 'Freemind';
   return str.charAt(0).toUpperCase() + str.slice(1);
 }

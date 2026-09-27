@@ -589,6 +589,28 @@ try {
     failed++;
   }
 
+  // 16. FreeMind XML & OPML Test
+  const { parseFreeMindOrOpmlToMermaid } = await import('./src/utils/importers/freemind.js');
+  const freeMindSample = `<map version="1.0.1">
+    <node TEXT="Central Topic">
+      <node TEXT="Subtopic A" />
+      <node TEXT="Subtopic B" />
+    </node>
+  </map>`;
+  const convertedFm = parseFreeMindOrOpmlToMermaid(freeMindSample);
+  if (
+    convertedFm.startsWith('mindmap') &&
+    convertedFm.includes('root((Central Topic))') &&
+    convertedFm.includes('Subtopic A') &&
+    convertedFm.includes('Subtopic B')
+  ) {
+    console.log('✅ [FreeMind / OPML Converter] parseFreeMindOrOpmlToMermaid() parses FreeMind XML into Mermaid mindmap.');
+    passed++;
+  } else {
+    console.error('❌ [FreeMind / OPML Converter] failed:', convertedFm);
+    failed++;
+  }
+
 } catch (err) {
   console.error('❌ [Universal Importers] Test Group 7 failed:', err);
   failed++;
