@@ -11,6 +11,7 @@ import { initImportModal, openImportModal } from './components/import-modal.js';
 import { parseXmindToMermaid, exportMermaidToXmindBlob } from './utils/importers/xmind.js';
 import { parsePlantUmlToMermaid } from './utils/importers/plantuml.js';
 import { initWasmModal, openWasmModal } from './components/wasm-benchmark-modal.js';
+import { fixMermaidSyntax } from './utils/ai-syntax-fixer.js';
 import {
   buttonVariants,
   badgeVariants,
@@ -46,6 +47,14 @@ const themeSelectEl = $('themeSelect');
 const canvasAlertEl = $('canvasAlert');
 const alertMessageEl = $('alertMessage');
 const alertCloseBtn = $('alertCloseBtn');
+const alertFixAiBtn = $('alertFixAiBtn');
+const alertUndoBtn = $('alertUndoBtn');
+const alertIcon = $('alertIcon');
+const fixSyntaxBtn = $('fixSyntaxBtn');
+
+let currentSyntaxError = '';
+let lastBrokenCode = null;
+let successAlertTimer = null;
 
 const splitterEl = $('splitter');
 const editorPaneEl = $('editorPane');
@@ -182,7 +191,10 @@ async function initApp() {
       editorCtrl.insertSnippet(snippet);
       closeSidebarDrawer();
     },
+    onGetDiagramCode: () => editorCtrl?.getValue() || '',
+    onGetTitle: () => activeDiagramTitle || 'Current Diagram',
   });
+
 
   // 6. Setup Templates Gallery Drawer
   setupTemplatesDrawer();
@@ -379,12 +391,82 @@ function setSavedIndicator(isSaved) {
 }
 
 function showAlert(msg) {
+  currentSyntaxError = msg;
   alertMessageEl.textContent = msg;
+  if (alertIcon) alertIcon.textContent = '⚠️';
+  if (alertFixAiBtn) {
+    alertFixAiBtn.style.display = 'inline-flex';
+    alertFixAiBtn.innerHTML = '✨ Fix with AI';
+    alertFixAiBtn.classList.remove('loading');
+  }
+  if (alertUndoBtn) alertUndoBtn.style.display = 'none';
   canvasAlertEl.className = 'canvas-alert error show';
+  if (fixSyntaxBtn) fixSyntaxBtn.style.display = 'inline-flex';
+}
+
+function showFixSuccess(fixSummary) {
+  if (alertIcon) alertIcon.textContent = '✅';
+  alertMessageEl.textContent = `Fixed with AI: ${fixSummary}`;
+  if (alertFixAiBtn) alertFixAiBtn.style.display = 'none';
+  if (alertUndoBtn) alertUndoBtn.style.display = 'inline-flex';
+  canvasAlertEl.className = 'canvas-alert success show';
+  if (fixSyntaxBtn) fixSyntaxBtn.style.display = 'none';
+
+  clearTimeout(successAlertTimer);
+  successAlertTimer = setTimeout(() => {
+    if (canvasAlertEl.classList.contains('success')) {
+      hideAlert();
+    }
+  }, 6000);
 }
 
 function hideAlert() {
   canvasAlertEl.className = 'canvas-alert error';
+  if (fixSyntaxBtn) fixSyntaxBtn.style.display = 'none';
+  clearTimeout(successAlertTimer);
+}
+
+async function handleFixSyntaxWithAi() {
+  const brokenCode = editorCtrl.getValue();
+  if (!brokenCode || !brokenCode.trim()) return;
+
+  if (alertFixAiBtn) {
+    alertFixAiBtn.innerHTML = '<span class="ai-spinner" style="width:11px;height:11px;border-width:2px;display:inline-block;margin-right:4px;"></span> Fixing…';
+    alertFixAiBtn.classList.add('loading');
+  }
+  if (fixSyntaxBtn) {
+    fixSyntaxBtn.innerHTML = 'Fixing…';
+    fixSyntaxBtn.disabled = true;
+  }
+
+  try {
+    const result = await fixMermaidSyntax(brokenCode, currentSyntaxError, { aiAssistant });
+    if (result.success) {
+      lastBrokenCode = brokenCode;
+      editorCtrl.setValue(result.fixedCode);
+      const fixText = result.fixes?.length ? result.fixes[0] : 'Syntax repaired successfully';
+      showFixSuccess(fixText);
+    } else {
+      toggleSidebarDrawer('ai');
+      const promptInput = $('aiPromptText');
+      if (promptInput) {
+        promptInput.value = `Fix this Mermaid syntax error: ${currentSyntaxError}\n\n${brokenCode}`;
+      }
+      showAlert(result.error || currentSyntaxError);
+    }
+  } catch (err) {
+    console.error('Failed to fix syntax:', err);
+    showAlert(`AI Fix failed: ${err.message}`);
+  } finally {
+    if (alertFixAiBtn) {
+      alertFixAiBtn.innerHTML = '✨ Fix with AI';
+      alertFixAiBtn.classList.remove('loading');
+    }
+    if (fixSyntaxBtn) {
+      fixSyntaxBtn.innerHTML = '✨ Fix with AI';
+      fixSyntaxBtn.disabled = false;
+    }
+  }
 }
 
 // Visual Options
@@ -766,6 +848,15 @@ function bindUIEvents() {
   });
 
   alertCloseBtn.addEventListener('click', hideAlert);
+  alertFixAiBtn?.addEventListener('click', handleFixSyntaxWithAi);
+  fixSyntaxBtn?.addEventListener('click', handleFixSyntaxWithAi);
+  alertUndoBtn?.addEventListener('click', () => {
+    if (lastBrokenCode !== null) {
+      editorCtrl.setValue(lastBrokenCode);
+      lastBrokenCode = null;
+      hideAlert();
+    }
+  });
 
   // Editor Actions & Snippets
   $('formatCodeBtn').addEventListener('click', () => {
