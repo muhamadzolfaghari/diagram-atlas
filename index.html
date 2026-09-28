@@ -120,8 +120,8 @@
     ]
   }
   </script>
-  <script type="module" crossorigin src="/mermaid-studio/assets/index-CcoxbT9F.js"></script>
-  <link rel="stylesheet" crossorigin href="/mermaid-studio/assets/index-IXna2Rt9.css">
+  <script type="module" crossorigin src="/mermaid-studio/assets/index-nnKFmvHg.js"></script>
+  <link rel="stylesheet" crossorigin href="/mermaid-studio/assets/index-DSfeavr4.css">
 </head>
 <body>
   <!-- Landing Page View (SEO & Discovery) -->
@@ -982,6 +982,9 @@
             </div>
 
             <div class="editor-toolbar-right">
+              <button id="fixSyntaxBtn" class="editor-tool-btn fix-ai-tool-btn" type="button" title="Fix syntax errors with AI" style="display: none;">
+                ✨ Fix with AI
+              </button>
               <button id="formatCodeBtn" class="editor-tool-btn" type="button" title="Prettify & format code indentation">
                 ✨ Format
               </button>
@@ -1015,7 +1018,14 @@
         <section class="canvas-pane" id="canvasPane" aria-label="Interactive Diagram Canvas">
           <!-- Notification Banner / Syntax Error Alert -->
           <div id="canvasAlert" class="canvas-alert error" role="alert">
+            <span class="alert-icon" id="alertIcon">⚠️</span>
             <span id="alertMessage" class="alert-message">Mermaid syntax error</span>
+            <button id="alertFixAiBtn" class="alert-fix-btn" type="button" title="Automatically diagnose and fix syntax with AI">
+              ✨ Fix with AI
+            </button>
+            <button id="alertUndoBtn" class="alert-undo-btn" type="button" style="display: none;">
+              ↩ Undo
+            </button>
             <button id="alertCloseBtn" class="alert-close" type="button" aria-label="Dismiss error">✕</button>
           </div>
 
