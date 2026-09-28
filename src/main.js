@@ -12,6 +12,8 @@ import { parseXmindToMermaid, exportMermaidToXmindBlob } from './utils/importers
 import { parsePlantUmlToMermaid } from './utils/importers/plantuml.js';
 import { initWasmModal, openWasmModal } from './components/wasm-benchmark-modal.js';
 import { fixMermaidSyntax } from './utils/ai-syntax-fixer.js';
+import { AnalyticsModal } from './components/analytics-modal.js';
+import { visitorAnalytics } from './utils/visitor-analytics.js';
 import {
   buttonVariants,
   badgeVariants,
@@ -245,6 +247,11 @@ async function initApp() {
     },
   });
 
+  // 11. Initialize Real-Time Analytics Modal
+  const analyticsModal = new AnalyticsModal();
+  $('landingAnalyticsBtn')?.addEventListener('click', () => analyticsModal.open());
+  $('studioAnalyticsBtn')?.addEventListener('click', () => analyticsModal.open());
+
   // Initial minimap sync
   setTimeout(() => {
     if (minimapCtrl) minimapCtrl.update();
@@ -371,6 +378,7 @@ async function handleCodeChange(code) {
     StorageManager.saveDraft(code, activeTemplateId);
     canvasCtrl.measure();
     if (minimapCtrl) minimapCtrl.update();
+    visitorAnalytics.trackAction('diagram_render', { desc: `Rendered ${activeDiagramTitle || 'Diagram'}` });
   } else {
     showAlert(result.error);
     editorCtrl.setStatus('error', 'Syntax error');
@@ -446,6 +454,7 @@ async function handleFixSyntaxWithAi() {
       editorCtrl.setValue(result.fixedCode);
       const fixText = result.fixes?.length ? result.fixes[0] : 'Syntax repaired successfully';
       showFixSuccess(fixText);
+      visitorAnalytics.trackAction('syntax_fix', { desc: 'Repaired Mermaid syntax error' });
     } else {
       toggleSidebarDrawer('ai');
       const promptInput = $('aiPromptText');
