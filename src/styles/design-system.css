@@ -53,35 +53,36 @@
 
 :root {
   color-scheme: dark;
-  --background: #080c14;
-  --foreground: #f0f6fc;
+  --background: #060911;
+  --foreground: #f1f5f9;
 
-  --card: #0e1626;
-  --card-foreground: #f0f6fc;
+  --card: #0c111d;
+  --card-foreground: #f1f5f9;
 
-  --popover: #141f33;
-  --popover-foreground: #f0f6fc;
+  --popover: #111726;
+  --popover-foreground: #f1f5f9;
 
   --primary: #6366f1;
   --primary-foreground: #ffffff;
-  --primary-hover: #797bf5;
-  --primary-glow: rgba(99, 102, 241, 0.28);
+  --primary-hover: #7c7ff7;
+  --primary-glow: rgba(99, 102, 241, 0.35);
 
-  --secondary: #141f33;
-  --secondary-foreground: #f0f6fc;
+  --secondary: #131c2e;
+  --secondary-foreground: #f1f5f9;
 
-  --muted: #1e293b;
+  --muted: #1a2438;
   --muted-foreground: #94a3b8;
 
-  --accent: #253d64;
-  --accent-foreground: #f0f6fc;
+  --accent: #202e48;
+  --accent-foreground: #f1f5f9;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --border: #22324b;
-  --input: #22324b;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.1);
   --ring: #6366f1;
 
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 }
+
