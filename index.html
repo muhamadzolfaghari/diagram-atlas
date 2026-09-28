@@ -716,10 +716,10 @@
 
   <!-- Studio Workspace Application -->
   <div id="app" class="studio-hidden">
-    <!-- Top Header: NodeFlow Breadcrumb Navigation -->
+    <!-- Top Header: Desktop Menu Bar & Workspace Navigation -->
     <header class="app-header">
       <div class="header-left">
-        <button class="brand-badge-logo" type="button" data-action="open-landing" title="NodeFlow Home & Features" style="cursor: pointer; border: none; background: none; padding: 0;">
+        <button class="brand-badge-logo" type="button" data-action="open-landing" title="NodeFlow Home & Features">
           <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
             <circle cx="9" cy="9" r="3.5" fill="#818cf8"/>
             <circle cx="23" cy="9" r="3.5" fill="#c084fc"/>
@@ -729,41 +729,79 @@
             <path d="M12.5 9 H19.5" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
-        <button class="btn btn-sm btn-ghost" data-action="open-landing" type="button" title="View Landing Page & Features" style="font-size: 11px; padding: 3px 8px; margin-right: 4px; border: 1px solid var(--line); border-radius: 6px; color: var(--text-muted); background: var(--surface-2);">
-          🏠 Home
-        </button>
 
-        <nav class="breadcrumbs" aria-label="Project and Diagram Breadcrumbs">
-          <span class="crumb-root">NodeFlow</span>
-          <span class="crumb-separator">/</span>
-          <span class="crumb-root" style="color: var(--text-muted); font-weight: 500;">Projects</span>
-          <span class="crumb-separator">/</span>
-          <div class="diagram-title-wrap">
-            <input type="text" id="diagramTitleInput" class="diagram-title-input" value="Dependency Tree — Overview" aria-label="Diagram Title" title="Click to rename diagram" />
-            <span class="version-tag" id="versionTag" title="Diagram Version">v0.1</span>
-            <div class="saved-status-badge" id="savedStatusBadge">
-              <span class="saved-dot" id="savedDot"></span>
-              <span id="savedLabel">Saved</span>
+        <!-- Desktop Menu Bar -->
+        <div class="app-menu-bar" role="menubar">
+          <!-- File Menu -->
+          <div class="menu-dropdown-wrapper">
+            <button class="app-menu-btn" id="fileMenuBtn" type="button" aria-haspopup="true">File ▾</button>
+            <div class="app-menu-dropdown modal-card" id="fileMenuDropdown" style="display:none;">
+              <button class="menu-item-btn" id="menuNewDiagramBtn" type="button"><span>📄 New Diagram</span><kbd>Ctrl+N</kbd></button>
+              <button class="menu-item-btn" id="menuOpenTemplatesBtn" type="button"><span>📚 Starter Templates…</span><kbd>Ctrl+O</kbd></button>
+              <button class="menu-item-btn" id="menuOpenImportBtn" type="button"><span>📥 Import Multi-Format…</span><kbd>Ctrl+I</kbd></button>
+              <hr class="menu-divider" />
+              <button class="menu-item-btn" id="menuSaveSnapshotBtn" type="button"><span>💾 Save Version Snapshot</span><kbd>Ctrl+S</kbd></button>
+              <button class="menu-item-btn" id="menuSavedDiagramsBtn" type="button"><span>📁 Saved Diagrams Gallery…</span></button>
+              <hr class="menu-divider" />
+              <button class="menu-item-btn" id="menuProExportBtn" type="button"><span>🎨 Pro Export Studio…</span><kbd>Ctrl+E</kbd></button>
             </div>
-            <button class="badge" id="wasmAileronBadge" type="button" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-size: 10px; padding: 2px 8px; border-radius: 999px; margin-left: 6px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 4px;" title="Native WebAssembly Turbo active. Click to run benchmarks and diagnostics (Shift+W)">
-              <span style="font-size: 11px;">⚡</span> WASM
-            </button>
           </div>
-        </nav>
+
+          <!-- View Menu -->
+          <div class="menu-dropdown-wrapper">
+            <button class="app-menu-btn" id="viewMenuBtn" type="button" aria-haspopup="true">View ▾</button>
+            <div class="app-menu-dropdown modal-card" id="viewMenuDropdown" style="display:none;">
+              <button class="menu-item-btn" id="menuViewSplitBtn" type="button"><span>⚡ Split View</span></button>
+              <button class="menu-item-btn" id="menuViewCanvasBtn" type="button"><span>🎨 Canvas Only</span></button>
+              <button class="menu-item-btn" id="menuViewEditorBtn" type="button"><span>✏️ Code Editor Only</span></button>
+              <hr class="menu-divider" />
+              <button class="menu-item-btn" id="menuPresentBtn" type="button"><span>🖥️ Presentation Mode</span><kbd>P</kbd></button>
+              <button class="menu-item-btn" id="menuToggleMinimapBtn" type="button"><span>🗺️ Toggle Live MiniMap</span><kbd>M</kbd></button>
+              <button class="menu-item-btn" id="menuFitDiagramBtn" type="button"><span>🎯 Fit Diagram to Screen</span><kbd>F</kbd></button>
+            </div>
+          </div>
+
+          <!-- Tools Menu -->
+          <div class="menu-dropdown-wrapper">
+            <button class="app-menu-btn" id="toolsMenuBtn" type="button" aria-haspopup="true">Tools ▾</button>
+            <div class="app-menu-dropdown modal-card" id="toolsMenuDropdown" style="display:none;">
+              <button class="menu-item-btn" id="menuAiAssistantBtn" type="button"><span>✨ AI Diagram Assistant</span><kbd>Ctrl+K</kbd></button>
+              <button class="menu-item-btn" id="menuFixSyntaxBtn" type="button"><span>🛠️ Fix Syntax with AI</span></button>
+              <button class="menu-item-btn" id="menuWasmDiagBtn" type="button"><span>⚡ WASM Turbo Diagnostics</span><kbd>Shift+W</kbd></button>
+              <button class="menu-item-btn" id="menuAnalyticsBtn" type="button"><span>📊 Live Visitor Analytics</span></button>
+              <hr class="menu-divider" />
+              <button class="menu-item-btn" id="menuShortcutsBtn" type="button"><span>⌨️ Keyboard Shortcuts</span><kbd>?</kbd></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="header-v-separator"></div>
+
+        <div class="diagram-title-wrap">
+          <input type="text" id="diagramTitleInput" class="diagram-title-input" value="Dependency Tree — Overview" aria-label="Diagram Title" title="Click to rename diagram" />
+          <span class="version-tag" id="versionTag" title="Diagram Version">v0.1</span>
+          <div class="saved-status-badge" id="savedStatusBadge">
+            <span class="saved-dot" id="savedDot"></span>
+            <span id="savedLabel">Saved</span>
+          </div>
+          <button class="badge" id="wasmAileronBadge" type="button" style="background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35); font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 4px;" title="Native WebAssembly Turbo active. Click to run benchmarks and diagnostics (Shift+W)">
+            <span style="font-size: 11px;">⚡</span> WASM
+          </button>
+        </div>
       </div>
 
       <!-- Center: Layout View Mode Switcher -->
       <div class="header-center">
         <div class="view-mode-group" role="toolbar" aria-label="Workspace View Mode">
-          <button id="viewSplitBtn" class="view-mode-btn active" type="button" title="Split View: Code Editor + Diagram Canvas">
+          <button id="viewSplitBtn" class="view-mode-btn active" type="button" title="Split View">
             <span>⚡</span>
-            <span>Split View</span>
+            <span>Split</span>
           </button>
-          <button id="viewCanvasBtn" class="view-mode-btn" type="button" title="Canvas Only View">
+          <button id="viewCanvasBtn" class="view-mode-btn" type="button" title="Canvas Only">
             <span>🎨</span>
             <span>Canvas</span>
           </button>
-          <button id="viewEditorBtn" class="view-mode-btn" type="button" title="Code Editor Only View">
+          <button id="viewEditorBtn" class="view-mode-btn" type="button" title="Editor Only">
             <span>✏️</span>
             <span>Editor</span>
           </button>
@@ -778,12 +816,6 @@
           <span class="online-count">24 Online</span>
         </button>
 
-        <!-- AI Assistant Action Button -->
-        <button id="openAiDrawerBtn" class="btn-ai-sparkle" type="button" title="Open Mermaid AI Assistant (Natural Language Generator)">
-          <span>✨</span>
-          <span>AI Assistant</span>
-        </button>
-
         <!-- Visual Theme Dropdown -->
         <select id="themeSelect" class="theme-dropdown-select" title="Diagram Visual Theme" aria-label="Select Diagram Theme">
           <option value="dark">Theme: Dark</option>
@@ -793,23 +825,17 @@
           <option value="base">Theme: Base</option>
         </select>
 
-        <!-- Universal Importer Trigger (XMind, PlantUML, Outline) -->
-        <button id="headerImportBtn" class="btn btn-secondary" type="button" title="Universal Importer: XMind, PlantUML, Outline, CSV (Ctrl+I)">
-          <span>📥</span>
-          <span>Import / Convert</span>
-        </button>
-
-        <!-- Presentation Mode Trigger -->
-        <button id="presentBtn" class="btn btn-secondary" type="button" title="Enter Distraction-Free Presentation Mode (Key: P)">
-          <span>🖥️</span>
-          <span>Present</span>
+        <!-- AI Assistant Action Button -->
+        <button id="openAiDrawerBtn" class="btn-ai-sparkle" type="button" title="Open Mermaid AI Assistant">
+          <span>✨</span>
+          <span>AI Assistant</span>
         </button>
 
         <!-- Export Menu Trigger -->
         <div style="position: relative;">
           <button id="exportMenuBtn" class="btn btn-export-primary" type="button" title="Download or Export Diagram">
             <span>⚡ Export</span>
-            <span style="font-size: 10px;">▼</span>
+            <span style="font-size: 9px;">▼</span>
           </button>
           <div id="exportDropdown" class="modal-card" style="display: none; position: absolute; top: 40px; right: 0; width: 260px; z-index: 50; padding: 8px; box-shadow: 0 16px 40px rgba(0,0,0,0.75);">
             <button id="openProExportBtn" class="editor-tool-btn" style="width: 100%; justify-content: flex-start; padding: 9px 12px; margin-bottom: 4px; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.28); color: #818cf8; font-weight: 600;">

@@ -57,6 +57,7 @@ const fixSyntaxBtn = $('fixSyntaxBtn');
 let currentSyntaxError = '';
 let lastBrokenCode = null;
 let successAlertTimer = null;
+let analyticsModalInstance = null;
 
 const splitterEl = $('splitter');
 const editorPaneEl = $('editorPane');
@@ -248,9 +249,9 @@ async function initApp() {
   });
 
   // 11. Initialize Real-Time Analytics Modal
-  const analyticsModal = new AnalyticsModal();
-  $('landingAnalyticsBtn')?.addEventListener('click', () => analyticsModal.open());
-  $('studioAnalyticsBtn')?.addEventListener('click', () => analyticsModal.open());
+  analyticsModalInstance = new AnalyticsModal();
+  $('landingAnalyticsBtn')?.addEventListener('click', () => analyticsModalInstance.open());
+  $('studioAnalyticsBtn')?.addEventListener('click', () => analyticsModalInstance.open());
 
   // Initial minimap sync
   setTimeout(() => {
@@ -773,8 +774,114 @@ function updateProfileStats() {
   if ($('statSnapshotCount')) $('statSnapshotCount').textContent = snapshotCount;
 }
 
+// Desktop Menu Bar (File, View, Tools)
+function setupDesktopMenuBar() {
+  const fileMenuBtn = $('fileMenuBtn');
+  const viewMenuBtn = $('viewMenuBtn');
+  const toolsMenuBtn = $('toolsMenuBtn');
+
+  const fileDropdown = $('fileMenuDropdown');
+  const viewDropdown = $('viewMenuDropdown');
+  const toolsDropdown = $('toolsMenuDropdown');
+
+  const closeAllMenus = () => {
+    if (fileDropdown) fileDropdown.style.display = 'none';
+    if (viewDropdown) viewDropdown.style.display = 'none';
+    if (toolsDropdown) toolsDropdown.style.display = 'none';
+    fileMenuBtn?.classList.remove('active');
+    viewMenuBtn?.classList.remove('active');
+    toolsMenuBtn?.classList.remove('active');
+  };
+
+  const toggleMenu = (btn, dropdown) => {
+    const isVisible = dropdown.style.display === 'flex';
+    closeAllMenus();
+    if (!isVisible) {
+      dropdown.style.display = 'flex';
+      btn.classList.add('active');
+    }
+  };
+
+  fileMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu(fileMenuBtn, fileDropdown);
+  });
+
+  viewMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu(viewMenuBtn, viewDropdown);
+  });
+
+  toolsMenuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu(toolsMenuBtn, toolsDropdown);
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.menu-dropdown-wrapper')) {
+      closeAllMenus();
+    }
+  });
+
+  // File menu actions
+  $('menuNewDiagramBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    activeDiagramTitle = 'New Diagram';
+    diagramTitleInput.value = activeDiagramTitle;
+    editorCtrl.setValue('flowchart TD\n    Start([Start]) --> Process[Process Task]\n    Process --> Done{{Complete}}');
+    setTimeout(() => canvasCtrl.fit(true), 120);
+  });
+
+  $('menuOpenTemplatesBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    toggleSidebarDrawer('templates');
+  });
+
+  $('menuOpenImportBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    openImportModal('xmind');
+  });
+
+  $('menuSaveSnapshotBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    saveSnapshotBtn?.click();
+  });
+
+  $('menuSavedDiagramsBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    refreshSavedList();
+    openModal('savedModal');
+  });
+
+  $('menuProExportBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    openProExportModal();
+  });
+
+  // View menu actions
+  $('menuViewSplitBtn')?.addEventListener('click', () => { closeAllMenus(); setViewMode('split'); });
+  $('menuViewCanvasBtn')?.addEventListener('click', () => { closeAllMenus(); setViewMode('canvas'); });
+  $('menuViewEditorBtn')?.addEventListener('click', () => { closeAllMenus(); setViewMode('editor'); });
+  $('menuPresentBtn')?.addEventListener('click', () => { closeAllMenus(); enterPresentationMode(); });
+  $('menuToggleMinimapBtn')?.addEventListener('click', () => {
+    closeAllMenus();
+    minimapCtrl.toggle();
+    minimapToggleBtn.classList.toggle('active', minimapCtrl.isVisible);
+  });
+  $('menuFitDiagramBtn')?.addEventListener('click', () => { closeAllMenus(); canvasCtrl.fit(true); });
+
+  // Tools menu actions
+  $('menuAiAssistantBtn')?.addEventListener('click', () => { closeAllMenus(); toggleSidebarDrawer('ai'); });
+  $('menuFixSyntaxBtn')?.addEventListener('click', () => { closeAllMenus(); handleFixSyntaxWithAi(); });
+  $('menuWasmDiagBtn')?.addEventListener('click', () => { closeAllMenus(); openWasmModal(); });
+  $('menuAnalyticsBtn')?.addEventListener('click', () => { closeAllMenus(); analyticsModalInstance?.open(); });
+  $('menuShortcutsBtn')?.addEventListener('click', () => { closeAllMenus(); openModal('shortcutsModal'); });
+}
+
 // UI Event Bindings
 function bindUIEvents() {
+  setupDesktopMenuBar();
+
   // Breadcrumb Title Rename
   diagramTitleInput.addEventListener('change', () => {
     const val = diagramTitleInput.value.trim() || 'Untitled Diagram';
