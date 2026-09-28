@@ -125,18 +125,22 @@ export class AnalyticsModal {
                 </div>
 
                 <div style="background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
-                  <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">Your Session Details</div>
+                  <div style="font-weight: 700; font-size: 13px; margin-bottom: 8px;">Your Live Session &amp; Network</div>
                   <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <span style="color: var(--text-muted);">Active Session Time:</span>
-                    <span id="analyticsSessionTime" style="font-weight: 600; font-family: monospace;">--</span>
+                    <span style="color: var(--text-muted);">Your Location (GeoIP):</span>
+                    <span id="analyticsUserCountry" style="font-weight: 600; color: #4ade80;">🇺🇸 United States</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <span style="color: var(--text-muted);">Global P2P Peers:</span>
+                    <span id="analyticsGlobalPeers" style="font-weight: 600; color: #38bdf8;">Connected</span>
                   </div>
                   <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
                     <span style="color: var(--text-muted);">Synchronized Tabs:</span>
                     <span id="analyticsSyncedTabs" style="font-weight: 600; color: #22c55e;">1 tab</span>
                   </div>
                   <div style="display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0;">
-                    <span style="color: var(--text-muted);">Telemetry Mode:</span>
-                    <span style="color: #38bdf8; font-weight: 600;">100% Zero-Cloud Local</span>
+                    <span style="color: var(--text-muted);">Active Session Time:</span>
+                    <span id="analyticsSessionTime" style="font-weight: 600; font-family: monospace;">--</span>
                   </div>
                 </div>
               </div>
@@ -351,11 +355,21 @@ export class AnalyticsModal {
     if (kpiDiagrams) kpiDiagrams.textContent = data.totalDiagramsCreated.toLocaleString();
     if (kpiAi) kpiAi.textContent = (data.totalAiGenerations + data.totalSyntaxFixes).toLocaleString();
 
-    // Session stats
+    // Session & Real Network stats
     const sessionTime = this.modalEl.querySelector('#analyticsSessionTime');
     const syncedTabs = this.modalEl.querySelector('#analyticsSyncedTabs');
+    const userCountryEl = this.modalEl.querySelector('#analyticsUserCountry');
+    const globalPeersEl = this.modalEl.querySelector('#analyticsGlobalPeers');
+
     if (sessionTime) sessionTime.textContent = data.sessionDuration;
     if (syncedTabs) syncedTabs.textContent = `${data.activeTabs} tab${data.activeTabs > 1 ? 's' : ''}`;
+    if (userCountryEl && data.userGeo) {
+      userCountryEl.textContent = `${data.userGeo.flag} ${data.userGeo.name} (${data.userGeo.country})`;
+    }
+    if (globalPeersEl) {
+      const peers = data.globalPeersCount || 0;
+      globalPeersEl.textContent = `${peers} live peer${peers !== 1 ? 's' : ''} (Mesh)`;
+    }
 
     // Activity Feed
     const feed = this.modalEl.querySelector('#analyticsActivityFeed');
