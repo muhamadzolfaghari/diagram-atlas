@@ -21,11 +21,11 @@ export function parsePlantUmlToMermaid(pumlText) {
   const isClass = /class\s+\w+|\binterface\s+\w+|<\|--|\*--|o--/i.test(joined);
   const isState = /\[\*\]\s*-->|state\s+\w+/i.test(joined);
 
-  if (isClass && !isSequence) {
+  if (isClass && !/^(participant|actor|boundary|control|entity|database)\s/m.test(joined)) {
     return convertPlantUmlClassToMermaid(cleanLines);
   }
 
-  if (isState && !isSequence) {
+  if (isState) {
     return convertPlantUmlStateToMermaid(cleanLines);
   }
 

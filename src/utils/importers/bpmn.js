@@ -12,7 +12,7 @@ export function parseBpmnToMermaid(bpmnXmlText) {
   const output = ['flowchart TD'];
 
   // Safe node ID sanitize
-  const cleanId = id => (id || 'node').replace(/[^a-zA-Z0-9_]/g, '_');
+  const cleanId = id => 'bpmn_' + (id || 'node').replace(/[^a-zA-Z0-9_]/g, '_');
 
   const nodes = new Map();
   const edges = [];
@@ -50,9 +50,9 @@ export function parseBpmnToMermaid(bpmnXmlText) {
     const lowerTag = rawTag.toLowerCase();
 
     if (lowerTag.includes('startevent')) {
-      nodeSyntax = `${safeId}(([🟢 ${cleanLabel || 'Start'}]))`;
+      nodeSyntax = `${safeId}(["${cleanLabel || 'Start'}"])`;
     } else if (lowerTag.includes('endevent')) {
-      nodeSyntax = `${safeId}(([🛑 ${cleanLabel || 'End'}]))`;
+      nodeSyntax = `${safeId}(["${cleanLabel || 'End'}"])`;
     } else if (lowerTag.includes('gateway')) {
       nodeSyntax = `${safeId}{"🔷 ${cleanLabel || 'Decision'}"}`;
     } else if (lowerTag.includes('usertask')) {
