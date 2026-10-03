@@ -1,4 +1,4 @@
-name: Deploy NodeFlow to GitHub Pages
+name: Deploy DiagramAtlas to GitHub Pages
 
 on:
   push:

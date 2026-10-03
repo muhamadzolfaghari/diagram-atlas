@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 
 const dom = new JSDOM(`<!doctype html><html><body><div id="container"></div></body></html>`, {
-  url: 'http://localhost:4173/mermaid-studio/',
+  url: 'http://localhost:4173/diagram-atlas/',
   pretendToBeVisual: true,
 });
 
@@ -18,7 +18,7 @@ const { DIAGRAM_TEMPLATES } = await import('./src/components/templates.js');
 import fs from 'fs';
 import path from 'path';
 
-console.log('🧪 Starting NodeFlow Verification Suite...\n');
+console.log('🧪 Starting DiagramAtlas Verification Suite...\n');
 
 mermaid.initialize({
   startOnLoad: false,
@@ -101,13 +101,12 @@ if (!fs.existsSync('./dist/index.html')) {
 } else {
   const distHtml = fs.readFileSync('./dist/index.html', 'utf8');
   const checks = [
-    { name: 'Base path in JS script', check: distHtml.includes('/mermaid-studio/assets/index-') },
-    { name: 'Base path in CSS link', check: distHtml.includes('/mermaid-studio/assets/index-') },
-    { name: 'Base path in favicon', check: distHtml.includes('/mermaid-studio/favicon.svg') },
-    { name: 'Stage canvas element present', check: distHtml.includes('id="stage"') },
-    { name: 'Diagram container present', check: distHtml.includes('id="diagram-container"') },
-    { name: 'Code editor present', check: distHtml.includes('id="codeEditor"') },
-    { name: 'SEO title present', check: distHtml.includes('<title>NodeFlow') },
+    { name: 'Base path in JS script', check: distHtml.includes('/diagram-atlas/assets/index-') },
+    { name: 'Base path in CSS link', check: distHtml.includes('/diagram-atlas/assets/index-') },
+    { name: 'Base path in favicon', check: distHtml.includes('/diagram-atlas/favicon.svg') },
+    { name: 'React application mount present', check: distHtml.includes('id="root"') },
+    { name: 'Application module entry present', check: /<script[^>]*type="module"[^>]*src="[^"]+/.test(distHtml) },
+    { name: 'SEO title present', check: distHtml.includes('<title>DiagramAtlas') },
     { name: 'SEO meta description present', check: distHtml.includes('name="description"') },
   ];
 
@@ -652,7 +651,7 @@ try {
   }
 
   // 2. WebAssembly Native Graphviz C-Engine Test
-  const dotSource = 'digraph Architecture { rankdir=LR; NodeFlow -> Wasm -> NativePerformance; }';
+  const dotSource = 'digraph Architecture { rankdir=LR; DiagramAtlas -> Wasm -> NativePerformance; }';
   const graphvizSvg = await renderGraphvizWasm(dotSource);
   if (graphvizSvg && graphvizSvg.includes('<svg') && graphvizSvg.includes('NativePerformance')) {
     console.log(`✅ [Wasm Graphviz Engine] renderGraphvizWasm() compiled Graphviz C engine in WebAssembly (${graphvizSvg.length} bytes SVG).`);

@@ -16,7 +16,7 @@ import { parseFreeMindOrOpmlToMermaid } from '../utils/importers/freemind.js';
 import JSZip from 'jszip';
 
 /**
- * NodeFlow — Universal Importer & Multi-Format Diagram Converter
+ * DiagramAtlas — Universal Importer & Multi-Format Diagram Converter
  * 100% Free, Offline, and Client-Side:
  * - 🧠 XMind (.xmind) read, import & export
  * - 📦 Draw.io (.drawio / XML) to Flowchart
@@ -76,7 +76,7 @@ function createModalElement() {
         <div style="display: flex; align-items: center; gap: 10px;">
           <span style="font-size: 22px;">📥</span>
           <div>
-            <h2 class="modal-title" style="margin: 0; font-size: 18px;">NodeFlow — Universal Diagram Converter</h2>
+            <h2 class="modal-title" style="margin: 0; font-size: 18px;">DiagramAtlas — Universal Diagram Converter</h2>
             <p class="modal-subtitle" style="margin: 2px 0 0; font-size: 12px; color: var(--text-muted);">
               Replace expensive tools (XMind, Lucidchart, Draw.io Pro, D2, dbdiagram). 100% free &amp; private.
             </p>
@@ -142,7 +142,7 @@ function createModalElement() {
             <div style="font-size: 38px; margin-bottom: 8px;">🧠</div>
             <h3 style="margin: 0 0 6px; font-size: 16px;">Drop your .xmind file here</h3>
             <p style="margin: 0 0 16px; font-size: 13px; color: var(--text-muted); max-width: 600px; margin-left: auto; margin-right: auto;">
-              Supports modern XMind (.xmind / ZEN JSON) and legacy XMind 8 XML. Converts topics into NodeFlow mindmaps.
+              Supports modern XMind (.xmind / ZEN JSON) and legacy XMind 8 XML. Converts topics into DiagramAtlas mindmaps.
             </p>
             <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
               <button id="browseXmindBtn" class="btn btn-primary" type="button">
@@ -175,7 +175,7 @@ function createModalElement() {
 &lt;/mxGraphModel&gt;</textarea>
           <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
             <button id="convertDrawioBtn" class="btn btn-primary" type="button">
-              <span>Convert Draw.io to NodeFlow ↵</span>
+              <span>Convert Draw.io to DiagramAtlas ↵</span>
             </button>
           </div>
         </div>
@@ -614,7 +614,7 @@ function attachEventListeners(modalEl) {
 
     try {
       setStatus('Generating .xmind archive...', 'info');
-      const blob = await exportMermaidToXmindBlob(currentCode, 'NodeFlow Diagram');
+      const blob = await exportMermaidToXmindBlob(currentCode, 'DiagramAtlas Diagram');
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

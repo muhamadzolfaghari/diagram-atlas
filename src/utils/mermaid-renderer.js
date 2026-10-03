@@ -2,7 +2,7 @@ import mermaid from 'mermaid';
 import { renderGraphvizWasm } from './wasm/wasm-accelerator.js';
 
 /**
- * Mermaid & WebAssembly Graphviz renderer manager for NodeFlow
+ * Mermaid & WebAssembly Graphviz renderer manager for DiagramAtlas
  * Provides theme initialization, pre-parse syntax validation,
  * and dual-engine rendering (Mermaid + Native Graphviz WebAssembly).
  */

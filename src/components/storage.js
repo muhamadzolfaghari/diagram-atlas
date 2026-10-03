@@ -1,5 +1,5 @@
 /**
- * Local storage manager for NodeFlow
+ * Local storage manager for DiagramAtlas
  * Handles automatic draft saving, named diagrams library, and WebAssembly-hashed snapshots.
  */
 import { wasmFastHash } from '../utils/wasm/wasm-accelerator.js';

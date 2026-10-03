@@ -1,5 +1,5 @@
 /**
- * NodeFlow WebAssembly Acceleration Suite
+ * DiagramAtlas WebAssembly Acceleration Suite
  * Provides native hardware-speed operations:
  * 1. Inline Compiled WebAssembly Engine (FNV-1a 32-bit fast hashing & pixel buffer processing)
  * 2. Native Graphviz WebAssembly Engine (@viz-js/viz) for compiling DOT graphs to SVG
@@ -147,7 +147,7 @@ export async function getWasmCapabilities() {
     simd: false,
     threads: typeof SharedArrayBuffer !== 'undefined',
     webgpu: typeof navigator !== 'undefined' && !!navigator.gpu,
-    engine: 'NodeFlow Wasm Turbo v1.0',
+    engine: 'DiagramAtlas Wasm Turbo v1.0',
     graphvizEngine: 'Graphviz C Engine (@viz-js/viz v3.30.0)',
   };
 
@@ -180,7 +180,7 @@ export async function runWasmBenchmark() {
   const caps = await getWasmCapabilities();
 
   // Benchmark 1: FNV-1a Hashing (50,000 iterations)
-  const testPayload = 'flowchart LR\n  Client[Wasm Web Client] --> Gateway[Envoy]\n  Gateway --> Service[NodeFlow High Performance Engine]';
+  const testPayload = 'flowchart LR\n  Client[Wasm Web Client] --> Gateway[Envoy]\n  Gateway --> Service[DiagramAtlas High Performance Engine]';
   const iterations = 50000;
 
   const t0 = performance.now();

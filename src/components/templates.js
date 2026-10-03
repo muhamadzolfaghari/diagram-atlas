@@ -1,5 +1,5 @@
 /**
- * NodeFlow Universal Diagram & Design Specification Templates
+ * DiagramAtlas Universal Diagram & Design Specification Templates
  * Covers:
  * 1. Complete UML 2.5 Specification (All 14 Diagrams: Structure, Behavior, Interaction)
  * 2. Product Management & Design Thinking (Journeys, Kanban, Quadrants, Roadmaps, Funnels)
@@ -74,7 +74,7 @@ export const DIAGRAM_TEMPLATES = [
     code: `sequenceDiagram
     autonumber
     actor User as User / Client
-    participant App as NodeFlow SPA
+    participant App as DiagramAtlas SPA
     participant Auth as Auth Gateway (Wasm)
     participant OAuth as Identity Provider
     participant API as Backend Services
@@ -229,7 +229,7 @@ export const DIAGRAM_TEMPLATES = [
     code: `flowchart TB
     subgraph ClientDevice [Client Device: macOS / Linux / Windows]
         BrowserRuntime[<<execution environment>>\\nV8 / WebKit Runtime]
-        SPAArtifact[<<artifact>>\\nNodeFlow WebAssembly SPA Bundle]
+        SPAArtifact[<<artifact>>\\nDiagramAtlas WebAssembly SPA Bundle]
         BrowserRuntime --- SPAArtifact
     end
 
@@ -240,7 +240,7 @@ export const DIAGRAM_TEMPLATES = [
 
         subgraph K8sCluster [Kubernetes Production Cluster]
             IngressEnvoy[<<node>>\\nEnvoy Ingress Gateway]
-            subgraph Pod1 [NodeFlow Pod: Replica 1]
+            subgraph Pod1 [DiagramAtlas Pod: Replica 1]
                 FastAPIServer[<<execution environment>>\\nFastAPI Python ASGI]
                 WasmRustKernel[<<artifact>>\\nghostwire_core.so]
                 FastAPIServer --- WasmRustKernel
@@ -484,7 +484,7 @@ export const DIAGRAM_TEMPLATES = [
     code: `journey
     title User Onboarding & Visual Studio Discovery Journey
     section Discovery & Landing
-      Visit NodeFlow GitHub Repo: 5: Developer, Product Manager
+      Visit DiagramAtlas GitHub Repo: 5: Developer, Product Manager
       Read Interactive Pricing Matrix: 5: Product Manager
       Launch Studio in Web Browser: 5: Developer, Product Manager
     section Canvas & Editing
@@ -519,7 +519,7 @@ export const DIAGRAM_TEMPLATES = [
     [Native Graphviz WebAssembly Engine - 8 pts]
     [Dual Deployment GitHub Actions - 2 pts]
   Done
-    [Rebrand Studio to NodeFlow]
+    [Rebrand Studio to DiagramAtlas]
     [Complete 14 UML Diagrams Support]
     [Multi-Format Import & Export Matrix]
 `,
@@ -566,7 +566,7 @@ config:
   theme: dark
 ---
 gantt
-    title NodeFlow Enterprise Release Roadmap
+    title DiagramAtlas Enterprise Release Roadmap
     dateFormat YYYY-MM-DD
     axisFormat %d %b
 
@@ -593,7 +593,7 @@ gantt
     kind: 'mindmap',
     description: 'Hierarchical brainstorming mindmap of product capabilities, performance pillars, and formats.',
     code: `mindmap
-  root((NodeFlow Studio))
+  root((DiagramAtlas Studio))
     Wasm Acceleration
       Sub-millisecond FNV-1a Hashing
       Linear Memory Compositor
@@ -739,7 +739,7 @@ gantt
     color = "#7e22ce";
 
     AuthService [label="Auth Service\\n(OAuth 2.1 / Wasm Guard)", fillcolor="#4c1d95"];
-    DiagramEngine [label="NodeFlow Kernel\\n(WebAssembly Runner)", fillcolor="#065f46", color="#10b981"];
+    DiagramEngine [label="DiagramAtlas Kernel\\n(WebAssembly Runner)", fillcolor="#065f46", color="#10b981"];
     ExportWorker [label="Rasterizer Worker\\n(SIMD Compositor)", fillcolor="#1e3a8a", color="#60a5fa"];
   }
 
@@ -967,7 +967,7 @@ flowchart LR
     title: 'API Latency Percentiles & SLA Uptime (XY Chart)',
     category: 'Engineering & Data',
     kind: 'xychart',
-    description: 'Performance benchmark comparison comparing NodeFlow WebAssembly response times against legacy tools.',
+    description: 'Performance benchmark comparison comparing DiagramAtlas WebAssembly response times against legacy tools.',
     code: `xychart-beta
     title "p99 Execution Latency vs Concurrent Query Load"
     x-axis ["100 req/s", "500 req/s", "1,000 req/s", "5,000 req/s", "10,000 req/s"]

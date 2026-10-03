@@ -1,5 +1,5 @@
 /**
- * NodeFlow WebAssembly Diagnostics & Benchmark Suite Modal
+ * DiagramAtlas WebAssembly Diagnostics & Benchmark Suite Modal
  * Real-time hardware inspection and performance benchmark runner
  * comparing JavaScript vs WebAssembly execution speeds.
  */
@@ -267,10 +267,10 @@ async function executeBenchmarkUI() {
 function generateReportMarkdown() {
   const m = lastBenchmarkMetrics;
   if (!m) {
-    return `### NodeFlow WebAssembly Acceleration Report\n- Engine: WebAssembly Turbo v1.0\n- Graphviz: Native C Engine active\n- Status: Ready`;
+    return `### DiagramAtlas WebAssembly Acceleration Report\n- Engine: WebAssembly Turbo v1.0\n- Graphviz: Native C Engine active\n- Status: Ready`;
   }
 
-  return `### NodeFlow WebAssembly Performance Benchmark
+  return `### DiagramAtlas WebAssembly Performance Benchmark
 - **Wasm Core Engine**: Active
 - **SIMD Acceleration**: ${m.capabilities.simd ? '128-bit Active' : 'Fallback'}
 - **Threading**: ${m.capabilities.threads ? 'Multi-Threaded' : 'Standard'}

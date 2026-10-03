@@ -1,19 +1,19 @@
-# NodeFlow — Universal Visual Diagram & Mindmap Studio ⚡✨
+# DiagramAtlas — Universal Diagram & Chart Studio
 
-> **Live Application**: [https://muhamadzolfaghari.github.io/mermaid-studio/](https://muhamadzolfaghari.github.io/mermaid-studio/)  
+> **Live Application**: [https://muhamadzolfaghari.github.io/diagram-atlas/](https://muhamadzolfaghari.github.io/diagram-atlas/)  
 > *(Hosted on GitHub Pages • 100% Free, Client-Side, and Zero-Telemetry)*
 
-A free, universal, browser-based visual diagramming and mindmapping studio. Built as a high-performance, privacy-first alternative to expensive SaaS platforms ($60–$240+/year), **NodeFlow** brings CAD-grade canvas controls, local in-browser AI generation (WebGPU Qwen2.5-Coder), and universal importers for **XMind**, **Draw.io**, **PlantUML**, **D2 Lang**, **SQL DDL**, **OpenAPI**, and **Mermaid**.
+A free, browser-based studio for ER diagrams, UML models, charts, mindmaps, and architecture. Built as a high-performance, privacy-first alternative to expensive SaaS platforms ($60–$240+/year), **DiagramAtlas** brings CAD-grade canvas controls, local in-browser AI generation (WebGPU Qwen2.5-Coder), and universal importers for **XMind**, **Draw.io**, **PlantUML**, **D2 Lang**, **SQL DDL**, **OpenAPI**, and **Mermaid**.
 
-![NodeFlow Preview](./public/favicon.svg)
+![DiagramAtlas Preview](./public/favicon.svg)
 
 ---
 
 ## 💰 Expensive Formats & Paid Software Breakdown
 
-Many industry diagram tools lock essential export capabilities, format conversions, and advanced editors behind high annual paywalls. **NodeFlow eliminates these paywalls entirely** by providing 100% client-side, zero-cost support:
+Many industry diagram tools lock essential export capabilities, format conversions, and advanced editors behind high annual paywalls. **DiagramAtlas eliminates these paywalls entirely** by providing 100% client-side, zero-cost support:
 
-| Format & Extension | Expensive Industry Tool | SaaS Subscription Cost | Features Locked Behind Paywall | ⚡ NodeFlow Free Engine (100% Free / MIT) |
+| Format & Extension | Expensive Industry Tool | SaaS Subscription Cost | Features Locked Behind Paywall | ⚡ DiagramAtlas Free Engine (100% Free / MIT) |
 | :--- | :--- | :--- | :--- | :--- |
 | **`.xmind`** | **XMind Pro / MindManager** | **$59.99 – $179 / yr** | Pitch presentation mode, vector PDF export, theme customization, multi-sheet workbooks | **✓ 100% Free**: Bi-directional `.xmind` parser & exporter (XMind ZEN JSON & XMind 8 XML) with zero paywall. |
 | **`.drawio` / `mxGraph`** | **Lucidchart / Visio Plan 2** | **$95.40 – $240 / yr** | Shape caps (60 max), high-res export, revision history, team permission paywalls | **✓ 100% Free**: Direct Draw.io XML conversion to Mermaid flowcharts, 4K Retina PNG, and Vector PDF. |
@@ -97,7 +97,7 @@ Many industry diagram tools lock essential export capabilities, format conversio
 
 ## 📊 Platform Capabilities Matrix
 
-| Feature / Capability | ⚡ **NodeFlow** | **Mermaid Live Editor** | **XMind Pro** | **Lucidchart / Visio** | **Eraser.io / Miro** |
+| Feature / Capability | ⚡ **DiagramAtlas** | **Mermaid Live Editor** | **XMind Pro** | **Lucidchart / Visio** | **Eraser.io / Miro** |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Pricing Model** | **100% Free / MIT** | Free / Open Source | $59.99 / yr | $95 – $240 / yr | Freemium ($120/yr) |
 | **Account Required** | **None (Instant Access)** | None | Yes | Yes | Yes |
@@ -144,7 +144,7 @@ Many industry diagram tools lock essential export capabilities, format conversio
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/muhamadzolfaghari/mermaid-studio.git
+git clone https://github.com/muhamadzolfaghari/diagram-atlas.git
 cd mermaid-studio
 
 # Install dependencies
@@ -172,3 +172,15 @@ The compiled static assets are generated in `dist/` with base path `/mermaid-stu
 
 ## 📄 License
 MIT License. Free to use, adapt, and share.
+
+## Page navigation
+
+The React application uses React Router with a shared page layout. Hash URLs let every page open and refresh directly on GitHub Pages without server rewrite rules.
+
+- Home: `#/`
+- Studio: `#/studio`
+- Templates: `#/templates` (search and category filters are stored in the URL)
+- My diagrams: `#/saved`
+- Formats and features: `#/formats`
+
+The previous `#/compare` address redirects to `#/formats`. Unknown routes display the not-found page.

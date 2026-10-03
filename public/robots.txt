@@ -1,5 +1,5 @@
-# robots.txt for NodeFlow
+# robots.txt for DiagramAtlas
 User-agent: *
 Allow: /
 
-Sitemap: https://muhamadzolfaghari.github.io/mermaid-studio/sitemap.xml
+Sitemap: https://muhamadzolfaghari.github.io/diagram-atlas/sitemap.xml
