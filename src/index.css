@@ -61,5 +61,6 @@
 .workspace-panels { display: grid; grid-template-columns: minmax(260px, var(--editor-width, 48%)) 5px minmax(0,1fr); }
 .workspace-panels.canvas-only { grid-template-columns: 1fr; }
 .workspace-panels.source-only { grid-template-columns: 1fr; }
-@media(max-width: 900px) { .workspace-panels { grid-template-columns: 1fr; } .workspace-shell { height: calc(100dvh - 57px); min-height: 600px; } }
+@media(max-width: 1023px) { .workspace-panels { grid-template-columns: 1fr; } .workspace-shell { height: calc(100dvh - 57px); min-height: 600px; } }
 @media(prefers-reduced-motion: reduce) { *,*::before,*::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.marketing-diagram svg { width: 100% !important; max-width: 100% !important; height: auto !important; max-height: 340px; }

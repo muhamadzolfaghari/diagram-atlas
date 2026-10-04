@@ -1,165 +1,386 @@
-import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react'
-import { Minus, Plus, Maximize, Crosshair, RotateCcw, Grid3X3 } from 'lucide-react'
+import {
+  useEffect,
+  useRef,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import {
+  Minus,
+  Plus,
+  Maximize,
+  Crosshair,
+  RotateCcw,
+  Grid3X3,
+  Map as MapIcon,
+  MousePointer2,
+} from "lucide-react";
+import { Button, Tooltip, TooltipTrigger, TooltipContent } from "./ui.jsx";
 
-const CanvasStage = forwardRef(function CanvasStage({ containerRef, grid = 'dots', status }, ref) {
-  const stageRef = useRef(null)
-  const canvasRef = useRef(null)
-  const [zoom, setZoom] = useState(1)
-  const state = useRef({ x: 40, y: 40, z: 1 })
-
+const CanvasStage = forwardRef(function CanvasStage(
+  {
+    containerRef,
+    grid = "dots",
+    status,
+    documentId,
+    onSelect,
+    presentation = false,
+  },
+  ref,
+) {
+  const stageRef = useRef(null),
+    canvasRef = useRef(null),
+    camera = useRef({ x: 30, y: 30, z: 1 }),
+    shouldFit = useRef(true);
+  const [position, setPosition] = useState(camera.current),
+    [size, setSize] = useState({ w: 1000, h: 700 }),
+    [thumbnail, setThumbnail] = useState(""),
+    [minimap, setMinimap] = useState(true),
+    [wheelMode, setWheelMode] = useState("zoom"),
+    [laser, setLaser] = useState(null);
+  const callbacks = useRef({ onSelect, presentation, wheelMode });
+  callbacks.current = { onSelect, presentation, wheelMode };
+  const dimensions = () => {
+    const svg = containerRef.current?.querySelector("svg");
+    const box = svg?.viewBox?.baseVal;
+    return {
+      w: box?.width || svg?.getBoundingClientRect().width || 1000,
+      h: box?.height || svg?.getBoundingClientRect().height || 700,
+    };
+  };
   const apply = () => {
-    const c = canvasRef.current
-    const s = stageRef.current
-    if (!c || !s) return
-    c.style.transform = `translate3d(${state.current.x}px, ${state.current.y}px, 0) scale(${state.current.z})`
-    setZoom(state.current.z)
-    const gx = ((state.current.x % 22) + 22) % 22
-    const gy = ((state.current.y % 22) + 22) % 22
-    s.style.backgroundPosition = `${gx}px ${gy}px`
-  }
-
+    if (canvasRef.current)
+      canvasRef.current.style.transform = `translate3d(${camera.current.x}px,${camera.current.y}px,0) scale(${camera.current.z})`;
+    setPosition({ ...camera.current });
+  };
   const fit = () => {
-    const s = stageRef.current
-    const svg = containerRef.current?.querySelector('svg')
-    if (!s || !svg) return
-    let w = 1000, h = 700
-    try {
-      const box = svg.viewBox?.baseVal
-      if (box?.width) { w = box.width; h = box.height }
-      else { const b = svg.getBBox(); if (b.width) { w = b.width; h = b.height } }
-    } catch {}
-    const sw = s.clientWidth, sh = s.clientHeight
-    const scale = Math.min(1.2, Math.min((sw - 80) / w, (sh - 80) / h))
-    state.current.z = Math.min(4, Math.max(0.08, scale || 1))
-    state.current.x = (sw - w * state.current.z) / 2
-    state.current.y = Math.max(24, (sh - h * state.current.z) / 2)
-    apply()
-  }
-
-  useImperativeHandle(ref, () => ({ fit, zoomIn: () => zoomBy(1.2), zoomOut: () => zoomBy(1 / 1.2), reset: () => { state.current.z = 1; apply() } }))
-
-  const zoomBy = (f, cx, cy) => {
-    const s = stageRef.current
-    const r = s.getBoundingClientRect()
-    const ax = cx ?? r.width / 2, ay = cy ?? r.height / 2
-    const nz = Math.min(4, Math.max(0.08, state.current.z * f))
-    const wx = (ax - state.current.x) / state.current.z
-    const wy = (ay - state.current.y) / state.current.z
-    state.current.z = nz
-    state.current.x = ax - wx * nz
-    state.current.y = ay - wy * nz
-    apply()
-  }
-
+    const s = stageRef.current;
+    if (!s || !containerRef.current?.querySelector("svg")) return;
+    const d = dimensions();
+    setSize(d);
+    const z = Math.max(
+      0.04,
+      Math.min(1.5, (s.clientWidth - 80) / d.w, (s.clientHeight - 100) / d.h),
+    );
+    camera.current = {
+      x: (s.clientWidth - d.w * z) / 2,
+      y: (s.clientHeight - d.h * z) / 2,
+      z,
+    };
+    apply();
+  };
+  const center = () => {
+    const s = stageRef.current;
+    if (!s) return;
+    const d = dimensions();
+    camera.current.x = (s.clientWidth - d.w * camera.current.z) / 2;
+    camera.current.y = (s.clientHeight - d.h * camera.current.z) / 2;
+    apply();
+  };
+  const zoomBy = (factor, cx, cy) => {
+    const s = stageRef.current;
+    if (!s) return;
+    const ax = cx ?? s.clientWidth / 2,
+      ay = cy ?? s.clientHeight / 2;
+    const old = camera.current;
+    const z = Math.max(0.04, Math.min(6, old.z * factor));
+    camera.current = {
+      x: ax - ((ax - old.x) * z) / old.z,
+      y: ay - ((ay - old.y) * z) / old.z,
+      z,
+    };
+    apply();
+  };
+  const reset = () => {
+    camera.current.z = 1;
+    center();
+  };
+  useImperativeHandle(ref, () => ({
+    fit,
+    center,
+    reset,
+    zoomIn: () => zoomBy(1.25),
+    zoomOut: () => zoomBy(0.8),
+  }));
   useEffect(() => {
-    const s = stageRef.current
-    if (!s) return
-    let drag = null, moved = false, vx = 0, vy = 0, last = 0, lx = 0, ly = 0, inertia = 0
-
+    shouldFit.current = true;
+  }, [documentId]);
+  useEffect(() => {
+    if (status.state !== "ok") return;
+    const svg = containerRef.current?.querySelector("svg");
+    if (!svg) return;
+    setSize(dimensions());
+    setThumbnail(
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(svg))}`,
+    );
+    if (shouldFit.current) {
+      requestAnimationFrame(fit);
+      shouldFit.current = false;
+    }
+  }, [status, documentId]);
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    const pointers = new Map();
+    let drag = null,
+      pinch = null,
+      moved = false;
     const down = (e) => {
-      if (e.button !== 0) return
-      drag = { sx: e.clientX - state.current.x, sy: e.clientY - state.current.y }
-      moved = false; vx = vy = 0; last = performance.now(); lx = e.clientX; ly = e.clientY
-      cancelAnimationFrame(inertia)
-      s.setPointerCapture(e.pointerId)
-    }
+      if (e.button !== 0) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      stage.setPointerCapture(e.pointerId);
+      moved = false;
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        pinch = { distance: Math.hypot(a.x - b.x, a.y - b.y) };
+        drag = null;
+      } else
+        drag = {
+          x: e.clientX,
+          y: e.clientY,
+          originX: camera.current.x,
+          originY: camera.current.y,
+        };
+    };
     const move = (e) => {
-      if (!drag) return
-      const nx = e.clientX - drag.sx, ny = e.clientY - drag.sy
-      if (Math.hypot(nx - state.current.x, ny - state.current.y) > 3) moved = true
-      state.current.x = nx; state.current.y = ny; apply()
-      const now = performance.now(), dt = now - last
-      if (dt > 8) { vx = vx * 0.3 + ((e.clientX - lx) / dt) * 0.7; vy = vy * 0.3 + ((e.clientY - ly) / dt) * 0.7; last = now; lx = e.clientX; ly = e.clientY }
-    }
-    const up = () => {
-      if (!drag) return
-      drag = null
-      const sp = Math.hypot(vx, vy)
-      if (sp > 0.15 && !moved === false) {
-        let cx = vx, cy = vy
-        const step = () => {
-          state.current.x += cx * 16; state.current.y += cy * 16; apply()
-          cx *= 0.92; cy *= 0.92
-          if (Math.hypot(cx, cy) > 0.02) inertia = requestAnimationFrame(step)
-        }
-        inertia = requestAnimationFrame(step)
+      const rect = stage.getBoundingClientRect();
+      if (callbacks.current.presentation)
+        setLaser({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 2 && pinch) {
+        const [a, b] = [...pointers.values()];
+        const distance = Math.hypot(a.x - b.x, a.y - b.y);
+        zoomBy(
+          distance / pinch.distance,
+          (a.x + b.x) / 2 - rect.left,
+          (a.y + b.y) / 2 - rect.top,
+        );
+        pinch.distance = distance;
+        moved = true;
+      } else if (drag) {
+        if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4)
+          moved = true;
+        camera.current.x = drag.originX + e.clientX - drag.x;
+        camera.current.y = drag.originY + e.clientY - drag.y;
+        apply();
       }
-    }
+    };
+    const up = (e) => {
+      if (!moved && !callbacks.current.presentation) {
+        const node = globalThis.document
+          .elementFromPoint(e.clientX, e.clientY)
+          ?.closest("g.node, g.entity, g.cluster, g.actor");
+        if (node) {
+          const label = node
+            .querySelector(".nodeLabel, .label, text, title")
+            ?.textContent?.trim();
+          callbacks.current.onSelect?.({
+            id: node.id,
+            label: label || node.id,
+          });
+        }
+      }
+      pointers.delete(e.pointerId);
+      drag = null;
+      pinch = null;
+    };
     const wheel = (e) => {
-      e.preventDefault()
-      const r = s.getBoundingClientRect()
-      if (e.ctrlKey || e.metaKey) zoomBy(Math.exp(-e.deltaY * 0.008), e.clientX - r.left, e.clientY - r.top)
-      else if (e.shiftKey) { state.current.x -= e.deltaY; apply() }
-      else if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { state.current.x -= e.deltaX; state.current.y -= e.deltaY; apply() }
-      else zoomBy(Math.exp(-e.deltaY * 0.0016), e.clientX - r.left, e.clientY - r.top)
-    }
-    s.addEventListener('pointerdown', down)
-    s.addEventListener('pointermove', move)
-    s.addEventListener('pointerup', up)
-    s.addEventListener('wheel', wheel, { passive: false })
-    const key = (e) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input, textarea, select, button, [contenteditable="true"], dialog')) return
-      if (e.key.toLowerCase() === 'f') { e.preventDefault(); fit() }
-      else if (e.key === '+' || e.key === '=') { e.preventDefault(); zoomBy(1.25) }
-      else if (e.key === '-') { e.preventDefault(); zoomBy(1 / 1.25) }
-      else if (e.key === '0') { e.preventDefault(); state.current = { x: 40, y: 40, z: 1 }; apply() }
-    }
-    window.addEventListener('keydown', key)
-    const t = setTimeout(fit, 350)
-    return () => { window.removeEventListener('keydown', key); s.removeEventListener('pointerdown', down); s.removeEventListener('pointermove', move); s.removeEventListener('pointerup', up); s.removeEventListener('wheel', wheel); clearTimeout(t); cancelAnimationFrame(inertia) }
-    // eslint-disable-next-line
-  }, [])
-
-  // refit when diagram changes size
-  useEffect(() => {
-    const t = setTimeout(() => {
-      const svg = containerRef.current?.querySelector('svg')
-      if (svg && state.current.z === 1 && state.current.x === 40) fit()
-    }, 500)
-    return () => clearTimeout(t)
-    // eslint-disable-next-line
-  }, [status.message])
-
+      e.preventDefault();
+      const rect = stage.getBoundingClientRect();
+      if (
+        e.ctrlKey ||
+        e.metaKey ||
+        (callbacks.current.wheelMode === "zoom" && Math.abs(e.deltaX) < 2)
+      )
+        zoomBy(
+          Math.exp(-e.deltaY * 0.003),
+          e.clientX - rect.left,
+          e.clientY - rect.top,
+        );
+      else {
+        camera.current.x -= e.shiftKey ? e.deltaY : e.deltaX;
+        camera.current.y -= e.shiftKey ? 0 : e.deltaY;
+        apply();
+      }
+    };
+    stage.addEventListener("pointerdown", down);
+    stage.addEventListener("pointermove", move);
+    stage.addEventListener("pointerup", up);
+    stage.addEventListener("pointercancel", up);
+    stage.addEventListener("wheel", wheel, { passive: false });
+    const keys = (e) => {
+      if (
+        e.ctrlKey ||
+        e.metaKey ||
+        e.altKey ||
+        e.target.closest(
+          'input,textarea,select,button,[contenteditable], [role="dialog"]',
+        )
+      )
+        return;
+      const key = e.key.toLowerCase();
+      if (
+        [
+          "f",
+          "c",
+          "0",
+          "+",
+          "=",
+          "-",
+          "arrowleft",
+          "arrowright",
+          "arrowup",
+          "arrowdown",
+        ].includes(key)
+      )
+        e.preventDefault();
+      if (key === "f") fit();
+      else if (key === "c") center();
+      else if (key === "0") reset();
+      else if (key === "+" || key === "=") zoomBy(1.25);
+      else if (key === "-") zoomBy(0.8);
+      else if (key.startsWith("arrow")) {
+        const delta = e.shiftKey ? 100 : 30;
+        camera.current.x +=
+          key === "arrowleft" ? delta : key === "arrowright" ? -delta : 0;
+        camera.current.y +=
+          key === "arrowup" ? delta : key === "arrowdown" ? -delta : 0;
+        apply();
+      }
+    };
+    window.addEventListener("keydown", keys);
+    const resize = new ResizeObserver(() => {
+      if (shouldFit.current) fit();
+    });
+    resize.observe(stage);
+    return () => {
+      stage.removeEventListener("pointerdown", down);
+      stage.removeEventListener("pointermove", move);
+      stage.removeEventListener("pointerup", up);
+      stage.removeEventListener("pointercancel", up);
+      stage.removeEventListener("wheel", wheel);
+      window.removeEventListener("keydown", keys);
+      resize.disconnect();
+    };
+  }, []);
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative h-full min-h-[260px] w-full overflow-hidden bg-[#0c121c]">
       <div
         ref={stageRef}
-        className={`studio-canvas absolute inset-0 ${grid === 'dots' ? 'dot-grid' : grid === 'lines' ? 'line-grid' : ''}`}
-        style={{ touchAction: 'none' }}
+        className={`studio-canvas absolute inset-0 ${grid === "dots" ? "dot-grid" : grid === "lines" ? "line-grid" : ""}`}
+        style={{
+          touchAction: "none",
+          backgroundPosition: `${position.x}px ${position.y}px`,
+        }}
+        onPointerLeave={() => setLaser(null)}
       >
-        <div ref={canvasRef} className="absolute left-0 top-0 will-change-transform" style={{ transformOrigin: '0 0' }}>
-          <div ref={containerRef} className="mermaid-stage min-w-[400px]" />
+        <div
+          ref={canvasRef}
+          className="absolute left-0 top-0"
+          style={{ transformOrigin: "0 0" }}
+        >
+          <div ref={containerRef} className="mermaid-stage" />
         </div>
       </div>
-
-      <div className="pointer-events-none absolute left-4 top-4 flex items-center gap-2">
-        <span className="chip !bg-black/50 backdrop-blur">{Math.round(zoom * 100)}%</span>
-        {status.state === 'rendering' && <span className="chip !bg-black/50">Rendering…</span>}
-      </div>
-
-      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-2xl border border-white/10 bg-black/60 p-1.5 shadow-2xl backdrop-blur-xl">
-        <DockBtn onClick={() => zoomBy(1 / 1.25)} title="Zoom out"><Minus className="size-4" /></DockBtn>
-        <button onClick={() => { state.current.z = 1; apply() }} className="rounded-xl px-2.5 py-2 font-mono text-xs text-slate-300 hover:bg-white/10">{Math.round(zoom * 100)}%</button>
-        <DockBtn onClick={() => zoomBy(1.25)} title="Zoom in"><Plus className="size-4" /></DockBtn>
-        <span className="mx-1 h-5 w-px bg-white/10" />
-        <DockBtn onClick={fit} title="Fit to screen (F)"><Maximize className="size-4" /></DockBtn>
-        <DockBtn onClick={() => { const s = stageRef.current; state.current.x = (s.clientWidth - 1000 * state.current.z) / 2; state.current.y = (s.clientHeight - 700 * state.current.z) / 2; apply() }} title="Center"><Crosshair className="size-4" /></DockBtn>
-        <DockBtn onClick={() => { state.current = { x: 40, y: 40, z: 1 }; apply() }} title="Reset"><RotateCcw className="size-4" /></DockBtn>
+      {status.state === "rendering" && (
+        <span className="absolute left-4 top-4 rounded-md border bg-card px-3 py-1.5 text-xs text-muted-foreground">
+          Building preview…
+        </span>
+      )}
+      {presentation && laser && (
+        <div
+          className="pointer-events-none absolute z-20 size-3 rounded-full bg-rose-400 shadow-[0_0_15px_4px_#fb7185]"
+          style={{ left: laser.x - 6, top: laser.y - 6 }}
+        />
+      )}
+      {minimap && thumbnail && (
+        <button
+          aria-label="Minimap navigation"
+          className="absolute bottom-16 right-3 hidden h-24 w-36 overflow-hidden rounded-md border bg-card p-2 md:block"
+          onClick={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            const x = ((e.clientX - r.left) / r.width) * size.w,
+              y = ((e.clientY - r.top) / r.height) * size.h;
+            camera.current.x =
+              stageRef.current.clientWidth / 2 - x * camera.current.z;
+            camera.current.y =
+              stageRef.current.clientHeight / 2 - y * camera.current.z;
+            apply();
+          }}
+        >
+          <img
+            src={thumbnail}
+            alt="Diagram minimap"
+            className="size-full object-contain opacity-80"
+          />
+          <span className="absolute bottom-1 right-1 rounded bg-background/80 px-1 text-[9px] text-muted-foreground">
+            MINIMAP
+          </span>
+        </button>
+      )}
+      <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-md border bg-card p-1 shadow-xl">
+        <Tool title="Zoom out" onClick={() => zoomBy(0.8)}>
+          <Minus />
+        </Tool>
+        <button
+          aria-label="Reset zoom to 100%"
+          onClick={reset}
+          className="w-12 rounded px-1 py-2 text-[11px] text-muted-foreground"
+        >
+          {Math.round(position.z * 100)}%
+        </button>
+        <Tool title="Zoom in" onClick={() => zoomBy(1.25)}>
+          <Plus />
+        </Tool>
+        <span className="mx-1 h-5 border-l" />
+        <Tool title="Fit to view (F)" onClick={fit}>
+          <Maximize />
+        </Tool>
+        <Tool title="Center (C)" onClick={center}>
+          <Crosshair />
+        </Tool>
+        <Tool title="Reset view (0)" onClick={reset}>
+          <RotateCcw />
+        </Tool>
+        <Tool title="Toggle minimap" onClick={() => setMinimap(!minimap)}>
+          <MapIcon />
+        </Tool>
+        <Tool
+          title={`Wheel mode: ${wheelMode}`}
+          onClick={() => setWheelMode(wheelMode === "zoom" ? "pan" : "zoom")}
+        >
+          <MousePointer2 />
+        </Tool>
       </div>
     </div>
-  )
-})
-
-function DockBtn({ children, ...props }) {
-  return <button aria-label={props.title} {...props} className="grid size-9 place-items-center rounded-xl text-slate-300 transition hover:bg-white/10 hover:text-white" />
+  );
+});
+function Tool({ title, children, ...props }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon-sm" aria-label={title} {...props}>
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{title}</TooltipContent>
+    </Tooltip>
+  );
 }
-
 export function GridToggle({ grid, onChange }) {
   return (
-    <button onClick={() => onChange(grid === 'dots' ? 'lines' : grid === 'lines' ? 'none' : 'dots')} className="btn-ghost !px-3 !py-2 text-xs" aria-label={`Canvas grid: ${grid}. Click to change`} title="Toggle grid">
-      <Grid3X3 className="size-4" /> {grid}
-    </button>
-  )
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-label={`Grid: ${grid}`}
+      onClick={() =>
+        onChange(grid === "dots" ? "lines" : grid === "lines" ? "none" : "dots")
+      }
+    >
+      <Grid3X3 className="size-4" />
+      <span className="hidden lg:inline">{grid}</span>
+    </Button>
+  );
 }
-
-export default CanvasStage
+export default CanvasStage;
