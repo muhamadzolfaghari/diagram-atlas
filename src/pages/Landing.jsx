@@ -1,147 +1,309 @@
-import { useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Check, ChevronDown, Play, Sparkles, Star } from 'lucide-react'
-import { DIAGRAM_TEMPLATES, getTemplateById } from '../components/templates.js'
-import { renderMermaid, initMermaid } from '../utils/mermaid-renderer.js'
-import { FEATURES, FAQS } from '../data/content.js'
-import { SectionHeader, Badge } from '../components/ui.jsx'
-
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Network,
+  Database,
+  Code2,
+  Files,
+  GitBranch,
+  Layers,
+  Shield,
+  FileCode2,
+  Braces,
+  CheckCircle2,
+} from "lucide-react";
+import { Button, Badge, Card, CardContent } from "../components/ui.jsx";
+import { FORMATS } from "../lib/formats.js";
+import { DIAGRAM_TEMPLATES } from "../components/templates.js";
+import { useDocumentPreview } from "../hooks/useDocumentPreview.js";
 const DEMOS = [
-  { label: 'Cloud Architecture', id: 'service-architecture' },
-  { label: 'OAuth2 Sequence', id: 'sequence-auth' },
-  { label: 'Database ER', id: 'er-diagram' },
-  { label: 'Roadmap Gantt', id: 'delivery-gantt' },
-]
-
+  {
+    id: "architecture",
+    title: "Architecture",
+    file: "architecture.mmd",
+    format: "mermaid",
+    source:
+      "flowchart LR\n  Web[Web client] --> API[API gateway]\n  API --> Orders[Order service]\n  Orders --> DB[(Database)]\n  Orders --> Queue[Event queue]",
+  },
+  {
+    id: "data",
+    title: "Database",
+    file: "schema.sql",
+    format: "sql",
+    source:
+      "CREATE TABLE users (\n  id INTEGER PRIMARY KEY,\n  name VARCHAR(100)\n);\nCREATE TABLE orders (\n  id INTEGER PRIMARY KEY,\n  user_id INTEGER REFERENCES users(id)\n);",
+  },
+  {
+    id: "uml",
+    title: "UML sequence",
+    file: "checkout.mmd",
+    format: "mermaid",
+    source:
+      "sequenceDiagram\n  participant Client\n  participant API\n  participant Orders\n  Client->>API: Create order\n  API->>Orders: Validate inventory\n  Orders-->>API: Confirmed\n  API-->>Client: Order created",
+  },
+];
+const features = [
+  {
+    icon: Files,
+    title: "Work in projects",
+    description:
+      "Keep source files in a project, open multiple tabs, and return to your workspace with your drafts intact.",
+  },
+  {
+    icon: Code2,
+    title: "Edit the original source",
+    description:
+      "Write SQL, UML, API specs, DOT, and more with highlighting, search, completion, and undo.",
+  },
+  {
+    icon: Network,
+    title: "Model on the canvas",
+    description:
+      "Pan and zoom, navigate with a minimap, and edit flowchart nodes and connections alongside source.",
+  },
+  {
+    icon: GitBranch,
+    title: "Keep versions and deliver",
+    description:
+      "Create checkpoints, download project backups, and export diagrams for documentation and presentations.",
+  },
+];
 export default function Landing() {
-  const nav = useNavigate()
-  const [tab, setTab] = useState(0)
-  const [code, setCode] = useState('')
-  const [faqOpen, setFaqOpen] = useState(0)
-
-  useEffect(() => { initMermaid('dark') }, [])
-  useEffect(() => {
-    const tpl = getTemplateById(DEMOS[tab].id)
-    setCode(tpl.code)
-    const stage = document.getElementById('hero-demo-stage')
-    const pre = document.getElementById('hero-demo-code')
-    if (pre) pre.textContent = tpl.code.slice(0, 900)
-    if (stage) {
-      stage.innerHTML = '<div class="text-sm text-slate-500 p-8">Rendering…</div>'
-      renderMermaid(stage, tpl.code).then(() => {
-        const svg = stage.querySelector('svg')
-        if (svg) { svg.style.maxWidth = '100%'; svg.style.height = 'auto' }
-      })
-    }
-  }, [tab])
-
+  const [demo, setDemo] = useState(0),
+    document = DEMOS[demo];
+  const preview = useDocumentPreview(document, "dark", "split");
   return (
     <div>
-      {/* HERO */}
-      <section className="relative overflow-hidden">
-        <div className="mx-auto max-w-7xl px-4 pb-10 pt-14 sm:px-6 sm:pt-20">
-          <div className="anim-in mx-auto max-w-4xl text-center">
-            <button onClick={() => nav('/studio')} className="chip mx-auto !border-indigo-400/30 !bg-indigo-500/10 !text-indigo-200">
-              <Sparkles className="size-3.5" /> DIAGRAMATLAS · FREE & OPEN SOURCE
-            </button>
-            <h1 className="mt-6 text-4xl font-black leading-[1.05] tracking-tight text-white sm:text-6xl">
-              One studio. Every perspective.
-              <span className="block bg-gradient-to-r from-indigo-300 via-violet-300 to-sky-300 bg-clip-text text-transparent">Diagrams, models & charts.</span>
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-relaxed text-slate-400 sm:text-lg">
-              Model databases with ER diagrams, describe systems with UML, and explore ideas with charts and mindmaps. Bring your work from <b className="text-slate-200">XMind</b>, <b className="text-slate-200">Draw.io</b>, <b className="text-slate-200">PlantUML</b>, <b className="text-slate-200">D2</b>, <b className="text-slate-200">SQL DDL</b> and <b className="text-slate-200">Mermaid</b>.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <button onClick={() => nav('/studio')} className="btn-primary !px-6 !py-3 !text-[15px]">Start diagramming <ArrowRight className="size-4" /></button>
-              <a href="#demo" onClick={(e) => { e.preventDefault(); const demo = document.getElementById('demo'); demo?.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' }); demo?.focus({ preventScroll: true }) }} className="btn-ghost !px-6 !py-3"><Play className="size-4" /> Interactive playground</a>
-              <a href="https://github.com/muhamadzolfaghari/diagram-atlas" target="_blank" rel="noreferrer" className="btn-ghost !px-6 !py-3"><Star className="size-4" /> Source</a>
+      <section className="border-b bg-card/30">
+        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 sm:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-[1fr_.8fr]">
+            <div>
+              <Badge tone="indigo">
+                <span className="size-1.5 rounded-full bg-primary" />
+                Open source modeling workspace
+              </Badge>
+              <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-[1.12] tracking-[-.04em] sm:text-6xl">
+                Your diagram IDE.
+                <br />
+                <span className="text-muted-foreground">
+                  From source to system.
+                </span>
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground">
+                Build UML models, ER schemas, architecture, and charts in one
+                browser workspace. Keep source files, live diagrams, and
+                versions together.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button size="lg" asChild>
+                  <Link to="/studio">
+                    Open workspace <ArrowRight />
+                  </Link>
+                </Button>
+                <Button size="lg" variant="outline" asChild>
+                  <Link to="/templates">
+                    Explore templates <ArrowUpRight />
+                  </Link>
+                </Button>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-5 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Shield className="size-3.5" />
+                  Local project storage
+                </span>
+                <span>No account required</span>
+                <span>MIT licensed</span>
+              </div>
             </div>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[13px] text-slate-400">
-              {['Zero telemetry & private', 'No account required', 'Vector PDF · SVG · 4K PNG', 'Works offline'].map((t) => (
-                <span key={t} className="inline-flex items-center gap-1.5"><Check className="size-4 text-emerald-400" /> {t}</span>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                {
+                  icon: Network,
+                  label: "UML & architecture",
+                  detail: "Structure, behavior, interactions",
+                  query: "UML",
+                },
+                {
+                  icon: Database,
+                  label: "Entity relationships",
+                  detail: "Tables, keys, and data models",
+                  query: "erDiagram",
+                },
+                {
+                  icon: Layers,
+                  label: "Charts & planning",
+                  detail: "Gantt, timelines, and data charts",
+                  query: "Product & Design",
+                },
+                {
+                  icon: GitBranch,
+                  label: "Flows & mindmaps",
+                  detail: "Processes and connected ideas",
+                  query: "mindmap",
+                },
+              ].map((f) => (
+                <Link
+                  key={f.label}
+                  to={`/templates?q=${encodeURIComponent(f.query)}`}
+                  className="group rounded-lg border bg-card p-5 transition hover:border-primary/50"
+                >
+                  <div className="flex justify-between">
+                    <f.icon className="size-6 text-blue-300" />
+                    <ArrowUpRight className="size-4 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <h2 className="mt-5 text-sm font-medium">{f.label}</h2>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {f.detail}
+                  </p>
+                </Link>
               ))}
             </div>
           </div>
-
-          <div className="mx-auto mt-9 flex max-w-4xl flex-wrap justify-center gap-2" aria-label="Explore diagram types">
-            {[['ER diagrams', 'erDiagram'], ['UML models', 'UML'], ['Architecture', 'architecture'], ['Charts & timelines', 'chart'], ['Mindmaps', 'mindmap']].map(([label, query]) => (
-              <Link key={label} to={`/templates?q=${encodeURIComponent(query)}`} className="rounded-lg border border-white/10 bg-white/[0.025] px-4 py-2 text-xs font-medium text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-400/10">{label} ↗</Link>
-            ))}
-          </div>
-          {/* playground */}
-          <div id="demo" tabIndex={-1} className="glass anim-in mx-auto mt-12 max-w-6xl overflow-hidden rounded-3xl" style={{ animationDelay: '.15s' }}>
-            <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-4 py-3">
-              <div className="flex gap-1.5"><span className="size-2.5 rounded-full bg-rose-400" /><span className="size-2.5 rounded-full bg-amber-400" /><span className="size-2.5 rounded-full bg-emerald-400" /></div>
-              <div className="flex flex-wrap gap-1.5">
-                {DEMOS.map((d, i) => (
-                  <button key={d.id} onClick={() => setTab(i)} className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${i === tab ? 'bg-indigo-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>{d.label}</button>
-                ))}
-              </div>
-              <button onClick={() => nav(`/studio?template=${DEMOS[tab].id}`)} className="btn-primary ml-auto !py-1.5 !text-xs">Open in Studio ↗</button>
-            </div>
-            <div className="grid md:grid-cols-2">
-              <pre id="hero-demo-code" className="max-h-[380px] overflow-auto border-b border-white/10 p-5 font-mono text-[11.5px] leading-relaxed text-slate-300 md:border-b-0 md:border-r" />
-              <div className="dot-grid min-h-[280px] max-h-[380px] overflow-auto bg-black/20 p-6">
-                <div id="hero-demo-stage" className="mermaid-stage mx-auto w-fit" />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
-
-      {/* FEATURES bento */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-        <SectionHeader eyebrow="Engineered for developers & architects" title="A clearer way to work with complexity" desc="Write diagram code, see it take shape, and keep your work in your browser." />
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="glass card-hover rounded-3xl p-6">
-              <div className="grid size-11 place-items-center rounded-2xl bg-gradient-to-br from-indigo-500/30 to-sky-500/20 text-indigo-200"><f.icon className="size-5" /></div>
-              <h3 className="mt-4 font-bold text-white">{f.title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-slate-400">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* TEMPLATES */}
-      <section className="border-y border-white/5 bg-white/[0.015]">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <SectionHeader eyebrow="Starter templates" title="From database schemas to the big picture" desc="Production-ready templates. Click any card to open it directly in the studio." />
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {DIAGRAM_TEMPLATES.slice(0, 8).map((t) => (
-              <button key={t.id} onClick={() => nav(`/studio?template=${t.id}`)} className="glass card-hover rounded-2xl p-5 text-left">
-                <Badge tone="indigo">{t.kind}</Badge>
-                <div className="mt-3 font-bold text-white">{t.title}</div>
-                <div className="mt-1 line-clamp-2 text-[13px] text-slate-400">{t.description}</div>
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-primary">
+              The working environment
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+              A project, not a single preview.
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Explore source and diagrams side by side, then continue in the
+              full workspace.
+            </p>
+          </div>
+          <div className="flex gap-1 rounded-md border bg-card p-1">
+            {DEMOS.map((d, i) => (
+              <button
+                key={d.id}
+                aria-pressed={demo === i}
+                onClick={() => setDemo(i)}
+                className={`rounded px-3 py-2 text-xs ${demo === i ? "bg-accent text-foreground" : "text-muted-foreground"}`}
+              >
+                {d.title}
               </button>
             ))}
           </div>
-          <div className="mt-8 text-center">
-            <Link to="/templates" className="btn-ghost">Browse all {DIAGRAM_TEMPLATES.length} templates <ArrowRight className="size-4" /></Link>
+        </div>
+        <div className="overflow-hidden rounded-lg border bg-card shadow-2xl shadow-black/15">
+          <div className="flex h-11 items-center gap-3 border-b px-4">
+            <span className="flex gap-1.5">
+              <i className="size-2 rounded-full bg-slate-500" />
+              <i className="size-2 rounded-full bg-slate-600" />
+              <i className="size-2 rounded-full bg-slate-700" />
+            </span>
+            <FileCode2 className="size-3.5 text-primary" />
+            <span className="text-xs text-muted-foreground">
+              {document.file}
+            </span>
+            <Badge className="ml-auto">Live preview</Badge>
+          </div>
+          <div className="grid min-h-[340px] md:grid-cols-[.75fr_1fr]">
+            <pre className="max-h-[380px] overflow-auto border-b bg-background/40 p-6 font-mono text-xs leading-6 text-slate-300 md:border-r md:border-b-0">
+              {document.source}
+            </pre>
+            <div className="marketing-diagram dot-grid grid min-h-[300px] items-center overflow-hidden p-6">
+              <div
+                ref={preview.containerRef}
+                className="mermaid-stage w-full"
+              />
+              {preview.error && (
+                <p className="text-xs text-destructive">{preview.error}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-between border-t px-4 py-3">
+            <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <CheckCircle2 className="size-3 text-emerald-400" />
+              {preview.status.message}
+            </span>
+            <Button variant="ghost" size="sm" asChild>
+              <Link
+                to={`/studio?template=${demo === 1 ? "er-diagram" : demo === 2 ? "sequence-auth" : "service-architecture"}`}
+              >
+                Edit a full example <ArrowUpRight />
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
-
-      {/* FAQ */}
-      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <SectionHeader eyebrow="FAQ" title="Everything you need to know" />
-        <div className="mt-8 grid gap-3">
-          {FAQS.map((f, i) => (
-            <div key={i} className={`glass overflow-hidden rounded-2xl ${faqOpen === i ? 'border-indigo-400/40' : ''}`}>
-              <button aria-expanded={faqOpen === i} aria-controls={`faq-${i}`} onClick={() => setFaqOpen(faqOpen === i ? -1 : i)} className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left font-semibold text-white">
-                {f.q}<ChevronDown className={`size-4 shrink-0 transition ${faqOpen === i ? 'rotate-180' : ''}`} />
-              </button>
-              {faqOpen === i && <div id={`faq-${i}`} className="border-t border-white/10 px-5 py-4 text-sm leading-relaxed text-slate-400">{f.a}</div>}
+      <section className="mx-auto grid max-w-7xl gap-4 px-5 pb-14 sm:grid-cols-2 sm:px-8 lg:grid-cols-4">
+        {features.map((f) => (
+          <Card key={f.title} className="gap-0 py-0 shadow-none">
+            <CardContent className="p-5">
+              <f.icon className="size-5 text-blue-300" />
+              <h3 className="mt-4 text-sm font-medium">{f.title}</h3>
+              <p className="mt-2 text-xs leading-6 text-muted-foreground">
+                {f.description}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+      <section className="border-y bg-card/50">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-8 px-5 py-10 sm:px-8">
+          <div>
+            <h2 className="text-xl font-semibold">
+              Bring the formats you already use.
+            </h2>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+              Native Mermaid and Graphviz rendering, plus editable source-backed
+              previews for SQL, PlantUML, API specifications, XML formats, and
+              more.
+            </p>
+            <Button variant="link" className="mt-3 px-0" asChild>
+              <Link to="/formats">
+                See support and conversion limits <ArrowRight />
+              </Link>
+            </Button>
+          </div>
+          <div className="grid grid-cols-3 gap-6 text-center sm:gap-10">
+            <div>
+              <p className="text-3xl font-semibold">{FORMATS.length}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Source formats
+              </p>
             </div>
-          ))}
+            <div>
+              <p className="text-3xl font-semibold">
+                {DIAGRAM_TEMPLATES.length}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Starter templates
+              </p>
+            </div>
+            <div>
+              <p className="text-3xl font-semibold">14</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                UML categories
+              </p>
+            </div>
+          </div>
         </div>
-
-        <div className="glass mt-10 rounded-3xl bg-gradient-to-br from-indigo-600/20 to-sky-500/10 p-8 text-center sm:p-12">
-          <h3 className="text-2xl font-extrabold text-white sm:text-3xl">Ready to build your next diagram?</h3>
-          <p className="mx-auto mt-2 max-w-md text-sm text-slate-400">No accounts, no paywalls. Draft architecture and workflows in seconds.</p>
-          <button onClick={() => nav('/studio')} className="btn-primary mx-auto mt-6 !px-8 !py-3.5 !text-base">Open DiagramAtlas</button>
+      </section>
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8">
+        <div className="flex flex-wrap items-center justify-between gap-6 rounded-lg border bg-card p-6 sm:p-8">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">
+              Start with the system you’re building.
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Choose a template, open your source files, or create a new
+              project.
+            </p>
+          </div>
+          <Button size="lg" asChild>
+            <Link to="/studio">
+              Open DiagramAtlas <ArrowRight />
+            </Link>
+          </Button>
         </div>
       </section>
     </div>
-  )
+  );
 }

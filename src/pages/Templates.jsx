@@ -1,64 +1,172 @@
-import { useMemo } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
-import { Search, ArrowUpRight } from 'lucide-react'
-import { DIAGRAM_TEMPLATES } from '../components/templates.js'
-import { SectionHeader, Badge, EmptyState } from '../components/ui.jsx'
-
+import { useMemo } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  Search,
+  ArrowUpRight,
+  Network,
+  Database,
+  GitBranch,
+  Calendar,
+  Shapes,
+  Layers,
+  X,
+} from "lucide-react";
+import {
+  SectionHeader,
+  Badge,
+  EmptyState,
+  Button,
+  Input,
+} from "../components/ui.jsx";
+import { DIAGRAM_TEMPLATES } from "../components/templates.js";
+const icons = {
+  er: Database,
+  sequence: GitBranch,
+  gantt: Calendar,
+  class: Shapes,
+  mindmap: GitBranch,
+  flowchart: Network,
+};
 export default function Templates() {
-  const [params, setParams] = useSearchParams()
-  const q = params.get('q') || ''
-  const cat = params.get('category') || 'All'
-  const setFilter = (key, value, replace = false) => {
-    setParams((previous) => {
-      const next = new URLSearchParams(previous)
-      if (value && value !== 'All') next.set(key, value)
-      else next.delete(key)
-      return next
-    }, { replace })
-  }
-  const cats = useMemo(() => ['All', ...new Set(DIAGRAM_TEMPLATES.map((t) => t.category))], [])
-  const list = useMemo(() => {
-    const query = q.toLowerCase().trim()
-    return DIAGRAM_TEMPLATES.filter((t) => {
-      const okCat = cat === 'All' || t.category === cat
-      const okQ = !query || (t.title + t.kind + t.description + t.category + t.code).toLowerCase().includes(query)
-      return okCat && okQ
-    })
-  }, [q, cat])
-
+  const [params, setParams] = useSearchParams(),
+    q = params.get("q") || "",
+    category = params.get("category") || "All";
+  const categories = [
+    "All",
+    ...new Set(DIAGRAM_TEMPLATES.map((t) => t.category)),
+  ];
+  const setFilter = (key, value, replace = false) =>
+    setParams(
+      (previous) => {
+        const next = new URLSearchParams(previous);
+        if (value && value !== "All") next.set(key, value);
+        else next.delete(key);
+        return next;
+      },
+      { replace },
+    );
+  const list = useMemo(
+    () =>
+      DIAGRAM_TEMPLATES.filter(
+        (t) =>
+          (category === "All" || category === t.category) &&
+          (!q ||
+            `${t.title} ${t.kind} ${t.category} ${t.description} ${t.code}`
+              .toLowerCase()
+              .includes(q.toLowerCase())),
+      ),
+    [q, category],
+  );
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <SectionHeader eyebrow={`${DIAGRAM_TEMPLATES.length} starters`} title="Template gallery" desc="Explore ER schemas, UML models, architecture, charts, and mindmaps. Choose a template to start editing." />
-      <div className="glass mt-8 flex flex-col gap-3 rounded-2xl p-3 sm:flex-row sm:items-center">
-        <div className="flex flex-1 items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-3 py-2">
-          <Search className="size-4 text-slate-500" />
-          <input aria-label="Search templates" value={q} onChange={(e) => setFilter('q', e.target.value, true)} placeholder="Search title, kind, description…" className="w-full bg-transparent text-sm outline-none placeholder:text-slate-600" />
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {cats.map((c) => (
-            <button key={c} aria-pressed={cat === c} onClick={() => setFilter('category', c)} className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${cat === c ? 'bg-indigo-500 text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>{c}</button>
-          ))}
-        </div>
-      </div>
-
-      {list.length === 0 ? (
-        <div className="mt-6"><EmptyState icon="◈" title="No templates found" desc="Try a different keyword or category." /></div>
-      ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {list.map((t) => (
-            <Link key={t.id} to={`/studio?template=${t.id}`} className="glass card-hover group rounded-3xl p-5 text-left">
-              <div className="flex items-center justify-between gap-2">
-                <Badge tone="indigo">{t.kind}</Badge>
-                <ArrowUpRight className="size-4 text-slate-600 transition group-hover:text-indigo-300" />
-              </div>
-              <div className="mt-3 font-bold text-white">{t.title}</div>
-              <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-slate-500">{t.category}</div>
-              <div className="mt-2 line-clamp-2 text-[13px] leading-relaxed text-slate-400">{t.description}</div>
-              <pre className="mt-3 max-h-20 overflow-hidden rounded-xl border border-white/5 bg-black/40 p-2.5 font-mono text-[10.5px] leading-relaxed text-slate-500">{t.code.slice(0, 220)}…</pre>
+    <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      <SectionHeader
+        eyebrow="Start with a model"
+        title="Template library"
+        desc="Examples for systems, data, product planning, and all 14 UML categories. Each template opens as an editable file in your project."
+        action={
+          <Button variant="outline" asChild>
+            <Link to="/studio">
+              Open workspace <ArrowUpRight />
             </Link>
-          ))}
-        </div>
-      )}
+          </Button>
+        }
+      />
+      <div className="mt-8 grid gap-6 lg:grid-cols-[210px_1fr]">
+        <aside>
+          <div className="relative">
+            <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
+            <Input
+              aria-label="Search templates"
+              className="pl-9"
+              placeholder="Search templates…"
+              value={q}
+              onChange={(e) => setFilter("q", e.target.value, true)}
+            />
+          </div>
+          <p className="mb-3 mt-6 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Collections
+          </p>
+          <div className="flex flex-wrap gap-1 lg:grid">
+            {categories.map((c) => (
+              <button
+                key={c}
+                aria-pressed={category === c}
+                onClick={() => setFilter("category", c)}
+                className={`flex items-center justify-between gap-2 rounded-md px-3 py-2.5 text-left text-xs ${category === c ? "bg-primary/10 text-blue-300" : "text-muted-foreground hover:bg-accent"}`}
+              >
+                <span>{c === "All" ? "All templates" : c}</span>
+                <span className="text-[10px] opacity-70">
+                  {c === "All"
+                    ? DIAGRAM_TEMPLATES.length
+                    : DIAGRAM_TEMPLATES.filter((t) => t.category === c).length}
+                </span>
+              </button>
+            ))}
+          </div>
+          <div className="mt-6 rounded-md border bg-card p-3 text-xs leading-5 text-muted-foreground">
+            UML classes, sequences, and states use native Mermaid types. Other
+            UML categories use adapted flowchart, class, or timeline templates.
+          </div>
+        </aside>
+        <section>
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <p className="text-xs text-muted-foreground">
+              {list.length} templates{q && ` matching “${q}”`}
+            </p>
+            {(q || category !== "All") && (
+              <Button variant="ghost" size="sm" onClick={() => setParams({})}>
+                <X />
+                Clear filters
+              </Button>
+            )}
+          </div>
+          {list.length ? (
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {list.map((t) => {
+                const Icon = icons[t.kind] || Layers;
+                return (
+                  <Link
+                    key={t.id}
+                    to={`/studio?template=${t.id}`}
+                    className="group flex flex-col overflow-hidden rounded-lg border bg-card transition hover:border-primary/50"
+                  >
+                    <div className="relative flex h-28 items-center justify-center border-b bg-background/40">
+                      <div className="dot-grid absolute inset-0 opacity-30" />
+                      <Icon className="relative size-10 text-slate-500 group-hover:text-blue-300" />
+                      <Badge className="absolute bottom-3 left-3" tone="indigo">
+                        {t.kind}
+                      </Badge>
+                      <ArrowUpRight className="absolute right-3 top-3 size-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex flex-1 flex-col p-4">
+                      <h2 className="text-sm font-medium leading-5">
+                        {t.title.replace(/^\d+\. /, "")}
+                      </h2>
+                      <p className="mt-2 line-clamp-3 text-xs leading-5 text-muted-foreground">
+                        {t.description}
+                      </p>
+                      <p className="mt-4 border-t pt-3 text-[10px] text-muted-foreground">
+                        {t.category}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <EmptyState
+              icon={<Search />}
+              title="No matching templates"
+              desc="Try a diagram type such as ER, sequence, or mindmap."
+              action={
+                <Button variant="outline" onClick={() => setParams({})}>
+                  Clear filters
+                </Button>
+              }
+            />
+          )}
+        </section>
+      </div>
     </div>
-  )
+  );
 }

@@ -1,21 +1,45 @@
-import { Link } from 'react-router-dom'
-
+import { Link } from "react-router-dom";
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-black/20">
-      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between">
-        <div className="text-sm text-slate-400">
-          <span className="font-bold text-white">DiagramAtlas</span> — Universal diagram & chart studio · MIT · © 2026
+    <footer className="border-t">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-5 px-5 py-7 sm:px-8">
+        <div>
+          <p className="text-sm font-medium">DiagramAtlas</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Open source diagram IDE · MIT licensed
+          </p>
         </div>
-        <div className="flex flex-wrap items-center gap-4 text-[13px] text-slate-400">
-          <Link className="hover:text-white" to="/studio">Studio</Link>
-          <Link className="hover:text-white" to="/templates">Templates</Link>
-          <Link className="hover:text-white" to="/saved">My diagrams</Link>
-          <Link className="hover:text-white" to="/formats">Formats & features</Link>
-          <a className="hover:text-white" href="https://mermaid.js.org/intro/syntax-reference.html" target="_blank" rel="noreferrer">Mermaid docs ↗</a>
-          <a className="hover:text-white" href="https://github.com/muhamadzolfaghari/diagram-atlas" target="_blank" rel="noreferrer">GitHub ↗</a>
-        </div>
+        <nav
+          aria-label="Footer navigation"
+          className="flex flex-wrap gap-5 text-xs text-muted-foreground"
+        >
+          <Link className="hover:text-foreground" to="/studio">
+            Workspace
+          </Link>
+          <Link className="hover:text-foreground" to="/templates">
+            Templates
+          </Link>
+          <Link className="hover:text-foreground" to="/formats">
+            Format support
+          </Link>
+          <a
+            className="hover:text-foreground"
+            href="https://github.com/muhamadzolfaghari/diagram-atlas"
+            target="_blank"
+            rel="noreferrer"
+          >
+            GitHub ↗
+          </a>
+          <a
+            className="hover:text-foreground"
+            href="https://mermaid.js.org/intro/syntax-reference.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Mermaid docs ↗
+          </a>
+        </nav>
       </div>
     </footer>
-  )
+  );
 }

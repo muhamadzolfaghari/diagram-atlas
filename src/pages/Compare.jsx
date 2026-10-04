@@ -1,37 +1,178 @@
-import { Link } from 'react-router-dom'
-import { ArrowUpRight, Database, Shapes, Network, ChartNoAxesCombined, GitBranch, Lock } from 'lucide-react'
-import { SectionHeader } from '../components/ui.jsx'
-import { DIAGRAM_TEMPLATES } from '../components/templates.js'
-
-const families = [
-  { icon: Database, title: 'Entity relationships', query: 'erDiagram', desc: 'Model tables, keys, and relationships in a database schema.' },
-  { icon: Shapes, title: 'UML models', query: 'UML', desc: 'Explore all 14 UML diagram categories through native and adapted templates, including class, sequence, state, activity, and deployment.' },
-  { icon: Network, title: 'Architecture & systems', query: 'architecture', desc: 'Describe services, cloud infrastructure, C4 contexts, and dependencies.' },
-  { icon: ChartNoAxesCombined, title: 'Charts & planning', query: 'chart', desc: 'Visualize data with pie, XY, and Sankey charts; plan with Gantt charts and timelines.' },
-  { icon: GitBranch, title: 'Flows & mindmaps', query: 'mindmap', desc: 'Map decisions, organize ideas, and communicate how a process works.' },
-  { icon: Lock, title: 'Your work stays local', to: '/saved', desc: 'Keep named diagrams and version snapshots in your browser, without creating an account.' },
-]
-
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  Search,
+  ArrowUpRight,
+  CheckCircle2,
+  Info,
+  Code2,
+  Shield,
+  Files,
+} from "lucide-react";
+import {
+  SectionHeader,
+  Badge,
+  Button,
+  Input,
+  Card,
+  CardContent,
+} from "../components/ui.jsx";
+import { FORMATS } from "../lib/formats.js";
 export default function Compare() {
+  const [q, setQ] = useState(""),
+    [family, setFamily] = useState("All");
+  const list = useMemo(
+    () =>
+      FORMATS.filter(
+        (f) =>
+          (family === "All" || f.family === family) &&
+          `${f.name} ${f.description} ${f.extensions.join(" ")}`
+            .toLowerCase()
+            .includes(q.toLowerCase()),
+      ),
+    [q, family],
+  );
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <SectionHeader eyebrow="Explore DiagramAtlas" title="One workspace for many kinds of thinking" desc="From ER schemas and UML models to charts and architecture: choose the view that makes your idea clear." />
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {families.map((f) => <Link key={f.title} to={f.to || `/templates?q=${encodeURIComponent(f.query)}`} className="glass card-hover rounded-2xl p-6">
-          <div className="flex items-center justify-between"><f.icon className="size-6 text-indigo-300" /><ArrowUpRight className="size-4 text-slate-500" /></div>
-          <h2 className="mt-5 font-semibold text-white">{f.title}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-400">{f.desc}</p>
-        </Link>)}
+    <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
+      <SectionHeader
+        eyebrow="Format capabilities"
+        title="One workspace. Many source languages."
+        desc="Every supported source remains editable. Native renderers and derived previews have different capabilities; choose the format that fits your model."
+        action={
+          <Button asChild>
+            <Link to="/studio">
+              Open workspace <ArrowUpRight />
+            </Link>
+          </Button>
+        }
+      />
+      <div className="mt-7 grid gap-3 md:grid-cols-3">
+        {[
+          {
+            icon: Code2,
+            title: "Native rendering",
+            body: "Mermaid and Graphviz render directly. Their source is the model.",
+          },
+          {
+            icon: Files,
+            title: "Source-backed previews",
+            body: "Other languages derive a Mermaid view while retaining the original source for editing and download.",
+          },
+          {
+            icon: Shield,
+            title: "Honest format support",
+            body: "Conversions are intentionally limited. Vendor layout, macros, styling, and semantics may not survive the preview.",
+          },
+        ].map((f) => (
+          <Card key={f.title} className="py-0 shadow-none">
+            <CardContent className="p-5">
+              <f.icon className="size-5 text-primary" />
+              <h2 className="mt-3 text-sm font-medium">{f.title}</h2>
+              <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                {f.body}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      <div className="glass mt-8 rounded-2xl p-6 sm:p-8">
-        <h2 className="text-xl font-bold">From source to a shareable diagram</h2>
-        <div className="mt-5 grid gap-6 sm:grid-cols-3">
-          <div><p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">01 · Create</p><p className="mt-2 text-sm text-slate-400">Start from {DIAGRAM_TEMPLATES.length} templates, write Mermaid or Graphviz, or import Mermaid, XMind, and PlantUML files.</p></div>
-          <div><p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">02 · Refine</p><p className="mt-2 text-sm text-slate-400">See changes on the canvas, adjust the diagram theme, and switch between source, preview, and split view.</p></div>
-          <div><p className="text-xs font-semibold uppercase tracking-widest text-indigo-300">03 · Export</p><p className="mt-2 text-sm text-slate-400">Save SVG, PNG, PDF, Mermaid source, or an interactive HTML view. Export mindmaps to XMind.</p></div>
+      <div className="mt-8 flex flex-wrap items-center gap-3">
+        <div className="relative min-w-48 flex-1">
+          <Search className="absolute left-3 top-3 size-4 text-muted-foreground" />
+          <Input
+            aria-label="Search formats"
+            className="pl-9"
+            placeholder="Search format, extension, or capability…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
         </div>
-        <Link to="/studio" className="btn-primary mt-7">Open studio <ArrowUpRight className="size-4" /></Link>
+        <select
+          aria-label="Format family"
+          value={family}
+          onChange={(e) => setFamily(e.target.value)}
+          className="h-9 rounded-md border bg-background px-3 text-sm"
+        >
+          {["All", ...new Set(FORMATS.map((f) => f.family))].map((c) => (
+            <option key={c}>{c}</option>
+          ))}
+        </select>
+      </div>
+      <div className="mt-4 overflow-hidden rounded-lg border">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[760px] text-left text-xs">
+            <caption className="sr-only">
+              Supported formats and conversion limits
+            </caption>
+            <thead className="border-b bg-card text-[10px] uppercase tracking-widest text-muted-foreground">
+              <tr>
+                <th className="px-5 py-3 font-medium">Format</th>
+                <th className="px-4 py-3 font-medium">Editing & preview</th>
+                <th className="px-4 py-3 font-medium">Supported scope</th>
+                <th className="px-5 py-3 font-medium">Source</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((f) => (
+                <tr
+                  key={f.id}
+                  className="border-b last:border-0 hover:bg-card/70"
+                >
+                  <td className="px-5 py-4 align-top">
+                    <p className="font-medium">{f.name}</p>
+                    <p className="mt-1.5 font-mono text-[10px] text-muted-foreground">
+                      {f.extensions.length
+                        ? f.extensions.map((ext) => `.${ext}`).join(" · ")
+                        : ".json · .yaml · .yml"}
+                    </p>
+                  </td>
+                  <td className="px-4 py-4 align-top">
+                    <Badge tone={f.mode === "Native" ? "green" : "indigo"}>
+                      {f.mode === "Native"
+                        ? "Native"
+                        : f.mode === "Mindmap"
+                          ? "Editable mindmap"
+                          : "Derived preview"}
+                    </Badge>
+                    <p className="mt-2 text-[10px] text-muted-foreground">
+                      {f.family}
+                    </p>
+                  </td>
+                  <td className="max-w-md px-4 py-4 align-top leading-5 text-muted-foreground">
+                    {f.description}
+                  </td>
+                  <td className="px-5 py-4 align-top">
+                    <span className="flex items-center gap-1.5 text-emerald-300">
+                      <CheckCircle2 className="size-3.5" />
+                      Preserved
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {!list.length && (
+          <p className="p-8 text-center text-sm text-muted-foreground">
+            No matching formats.
+          </p>
+        )}
+      </div>
+      <div className="mt-6 flex gap-3 rounded-lg border bg-card p-5">
+        <Info className="mt-0.5 size-4 shrink-0 text-primary" />
+        <div>
+          <h2 className="text-sm font-medium">
+            Import, edit, model, and export
+          </h2>
+          <p className="mt-2 text-xs leading-6 text-muted-foreground">
+            Open multiple files, folders, ZIP archives, or DiagramAtlas project
+            backups. Edit source with a live preview, keep version snapshots,
+            and export source, SVG, PNG, PDF, interactive HTML, or XMind
+            mindmaps. PDF export currently embeds a raster image. The studio is
+            a local modeling environment; it does not execute imported code or
+            provide shared cloud editing.
+          </p>
+        </div>
       </div>
     </div>
-  )
+  );
 }
