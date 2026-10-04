@@ -98,7 +98,35 @@ export default function Compare() {
         </select>
       </div>
       <div className="mt-4 overflow-hidden rounded-lg border">
-        <div className="overflow-x-auto">
+        <div className="divide-y md:hidden">
+          {list.map((f) => (
+            <article key={f.id} className="p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 className="text-sm font-medium">{f.name}</h2>
+                <Badge tone={f.mode === "Native" ? "green" : "indigo"}>
+                  {f.mode === "Native"
+                    ? "Native"
+                    : f.mode === "Mindmap"
+                      ? "Editable mindmap"
+                      : "Derived preview"}
+                </Badge>
+              </div>
+              <p className="mt-2 font-mono text-[10px] text-muted-foreground">
+                {f.extensions.length
+                  ? f.extensions.map((ext) => `.${ext}`).join(" · ")
+                  : ".json · .yaml · .yml"}
+              </p>
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                {f.description}
+              </p>
+              <p className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-300">
+                <CheckCircle2 className="size-3" />
+                Editable source preserved
+              </p>
+            </article>
+          ))}
+        </div>
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[760px] text-left text-xs">
             <caption className="sr-only">
               Supported formats and conversion limits

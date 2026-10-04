@@ -527,7 +527,7 @@ try {
     convertedBpmn.startsWith('flowchart TD') &&
     convertedBpmn.includes('Start_1') &&
     convertedBpmn.includes('Process Payment') &&
-    convertedBpmn.includes('Start_1 --> Task_1')
+    convertedBpmn.includes('bpmn_Start_1 --> bpmn_Task_1')
   ) {
     console.log('✅ [BPMN 2.0 Converter] parseBpmnToMermaid() maps BPMN events and sequenceFlows to flowchart.');
     passed++;

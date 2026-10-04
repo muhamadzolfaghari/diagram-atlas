@@ -111,8 +111,9 @@ export class Exporter {
     if (!svgEl) throw new Error('No diagram found to render.');
 
     const svgString = this.getCleanSvgString(svgEl, { background: 'transparent', padding });
-    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
+    // A data URL keeps HTML labels in foreignObject origin-clean when drawn to canvas.
+    // Blob-backed SVG images with foreignObject taint the canvas in Chromium.
+    const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
 
     const box = svgEl.viewBox?.baseVal;
     let baseW = box?.width || svgEl.clientWidth || 1200;
@@ -147,16 +148,13 @@ export class Exporter {
           ctx.scale(scale, scale);
           ctx.drawImage(img, 0, 0, totalW, totalH);
 
-          URL.revokeObjectURL(url);
           resolve({ canvas, width: canvas.width, height: canvas.height });
         } catch (err) {
-          URL.revokeObjectURL(url);
           reject(err);
         }
       };
 
       img.onerror = () => {
-        URL.revokeObjectURL(url);
         reject(new Error('Failed to rasterize diagram SVG into canvas.'));
       };
 
@@ -266,7 +264,7 @@ export class Exporter {
   }
 
   /**
-   * Standalone Print-Ready Vector PDF Export
+   * Standalone PDF export with a high-resolution raster diagram
    * Synthesizes a compliant PDF 1.4 document client-side with 0 external dependencies.
    */
   static async downloadPdf(container, title = 'diagram', options = {}) {
